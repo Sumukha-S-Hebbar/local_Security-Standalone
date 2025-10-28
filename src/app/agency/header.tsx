@@ -54,7 +54,16 @@ export default function AgencyHeader() {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('userData');
+      const loggedOutState = {
+        isLoggedIn: false,
+        user: null,
+        role: null,
+        token: null,
+        hasUserProfile: null,
+        orgCode: null,
+        globalConsent: null,
+      };
+      localStorage.setItem('userData', JSON.stringify(loggedOutState));
     }
     router.push('/');
   };
