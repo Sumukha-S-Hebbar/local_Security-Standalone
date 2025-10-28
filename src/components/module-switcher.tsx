@@ -12,7 +12,7 @@ type Module = {
 };
 
 const allModules: Module[] = [
-  { name: 'Real Estate', href: 'https://ken.towerbuddy.tel/authorization' },
+  { name: 'Real Estate', href: 'https://ken.towerbuddy.tel/dashboard' },
   { name: 'Security', href: '#' }, // Href will be replaced by portal-specific home
   { name: 'Energy', href: '#' },
   { name: 'Incident Management', href: '#' },
