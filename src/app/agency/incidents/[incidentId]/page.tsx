@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -109,6 +110,7 @@ export default function AgencyIncidentReportPage() {
   const [incident, setIncident] = useState<IncidentDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const [description, setDescription] = useState('');
   const [incidentFiles, setIncidentFiles] = useState<FileList | null>(null);
@@ -117,9 +119,11 @@ export default function AgencyIncidentReportPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setLoggedInOrg(userData.user.organization);
+            setToken(userData.token);
         }
     }
   }, []);
@@ -130,11 +134,10 @@ export default function AgencyIncidentReportPage() {
 
     const fetchIncident = async () => {
         setIsLoading(true);
-        const token = localStorage.getItem('token') || undefined;
         const url = `/agency/${loggedInOrg.code}/incident/${incidentId}/`;
 
         try {
-            const response = await fetchData<{data: IncidentDetails}>(url, token);
+            const response = await fetchData<{data: IncidentDetails}>(url, token || undefined);
             if (response?.data) {
                 const data = response.data;
                 setIncident(data);
@@ -153,7 +156,7 @@ export default function AgencyIncidentReportPage() {
     };
     
     fetchIncident();
-  }, [incidentId, loggedInOrg, toast]);
+  }, [incidentId, loggedInOrg, toast, token]);
 
   if (isLoading) {
     return (
@@ -202,9 +205,8 @@ export default function AgencyIncidentReportPage() {
         return;
     }
     
-    if (!loggedInOrg) return;
+    if (!loggedInOrg || !token) return;
 
-    const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append('incident_type', incidentType);
     formData.append('incident_description', description);

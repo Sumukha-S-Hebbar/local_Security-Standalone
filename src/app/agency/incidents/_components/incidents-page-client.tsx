@@ -74,6 +74,7 @@ export function IncidentsPageClient() {
   const [incidentCounts, setIncidentCounts] = useState<IncidentCounts>({ active_incidents_count: 0, under_review_incidents_count: 0, resolved_incidents_count: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const statusFromQuery = searchParams.get('status');
 
@@ -87,9 +88,11 @@ export function IncidentsPageClient() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const orgData = localStorage.getItem('organization');
-      if (orgData) {
-        setLoggedInOrg(JSON.parse(orgData));
+      const userDataString = localStorage.getItem('userData');
+      if(userDataString) {
+        const userData = JSON.parse(userDataString);
+        setLoggedInOrg(userData.user.organization);
+        setToken(userData.token);
       }
     }
   }, []);
@@ -107,22 +110,19 @@ export function IncidentsPageClient() {
     if (!loggedInOrg) return;
 
     const fetchSupportingData = async () => {
-        const token = localStorage.getItem('token') || undefined;
-        
         const sitesUrl = `/agency/${loggedInOrg.code}/sites/list/`;
-        const sitesData = await fetchData<{results: Site[]}>(sitesUrl, token);
+        const sitesData = await fetchData<{results: Site[]}>(sitesUrl, token || undefined);
         setSites(sitesData?.results || []);
     };
 
     fetchSupportingData();
-  }, [loggedInOrg]);
+  }, [loggedInOrg, token]);
   
    useEffect(() => {
     if (!loggedInOrg) return;
 
     const fetchFilteredIncidents = async () => {
       setIsLoading(true);
-      const token = localStorage.getItem('token') || undefined;
       
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -147,7 +147,7 @@ export function IncidentsPageClient() {
       const url = `/agency/${loggedInOrg.code}/incidents/list/?${params.toString()}`;
 
       try {
-        const data = await fetchData<PaginatedIncidentsResponse>(url, token);
+        const data = await fetchData<PaginatedIncidentsResponse>(url, token || undefined);
         setIncidents(data?.results || []);
         setTotalCount(data?.count || 0);
         if (data?.counts) {
@@ -163,7 +163,7 @@ export function IncidentsPageClient() {
     };
 
     fetchFilteredIncidents();
-  }, [loggedInOrg, selectedStatus, searchQuery, selectedSite, selectedYear, selectedMonth, currentPage]);
+  }, [loggedInOrg, selectedStatus, searchQuery, selectedSite, selectedYear, selectedMonth, currentPage, token]);
 
   useEffect(() => {
     setCurrentPage(1);

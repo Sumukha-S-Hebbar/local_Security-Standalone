@@ -128,15 +128,12 @@ export default function RootPage() {
           role: data.user.role,
           globalConsent: data.organization?.global_consent || false,
           hasUserProfile: data.user.has_user_profile,
-          orgCode: data.organization?.code,
+          orgCode: orgForStorage?.code,
           token: data.token,
       };
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('userData', JSON.stringify(userDataToStore));
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('organization', JSON.stringify(orgForStorage));
-        localStorage.setItem('token', data.token);
       }
 
       toast({

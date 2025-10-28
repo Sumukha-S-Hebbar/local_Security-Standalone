@@ -109,6 +109,7 @@ export default function AgencyGuardReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isIncidentsLoading, setIsIncidentsLoading] = useState(false);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -119,9 +120,11 @@ export default function AgencyGuardReportPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setLoggedInOrg(userData.user.organization);
+            setToken(userData.token);
         }
     }
   }, []);
@@ -132,10 +135,9 @@ export default function AgencyGuardReportPage() {
     } else {
       setIsLoading(true);
     }
-    const token = localStorage.getItem('token') || undefined;
 
     try {
-        const data = await fetchData<GuardReportData>(url, token);
+        const data = await fetchData<GuardReportData>(url, token || undefined);
         if (isFiltering) {
             setPaginatedIncidents(data?.incidents || null);
         } else {
@@ -152,7 +154,7 @@ export default function AgencyGuardReportPage() {
           setIsLoading(false);
         }
     }
-  }, [toast]);
+  }, [toast, token]);
   
   useEffect(() => {
     if (loggedInOrg && guardId) {
@@ -179,9 +181,8 @@ export default function AgencyGuardReportPage() {
   const handleIncidentPagination = useCallback(async (url: string | null) => {
       if (!url) return;
       setIsIncidentsLoading(true);
-      const token = localStorage.getItem('token') || undefined;
       try {
-        const data = await fetchData<{incidents: PaginatedIncidents}>(url, token);
+        const data = await fetchData<{incidents: PaginatedIncidents}>(url, token || undefined);
         setPaginatedIncidents(data?.incidents || null);
       } catch (error) {
         console.error("Failed to fetch paginated incidents:", error);
@@ -189,7 +190,7 @@ export default function AgencyGuardReportPage() {
       } finally {
         setIsIncidentsLoading(false);
       }
-  }, [toast]);
+  }, [toast, token]);
 
   const availableYears = useMemo(() => {
     if (!reportData?.incidents?.results) return [];

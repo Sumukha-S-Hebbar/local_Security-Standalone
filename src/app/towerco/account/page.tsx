@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState, useEffect, useRef } from 'react';
@@ -50,13 +51,11 @@ export default function TowercoAccountPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('user');
-      const orgData = localStorage.getItem('organization');
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-      if (orgData) {
-        setOrganization(JSON.parse(orgData));
+      const userDataString = localStorage.getItem('userData');
+      if (userDataString) {
+        const userData = JSON.parse(userDataString);
+        setUser(userData.user.user);
+        setOrganization(userData.user.organization);
       }
     }
     setIsLoading(false);
@@ -73,7 +72,13 @@ export default function TowercoAccountPage() {
 
   async function onPasswordSubmit(values: PasswordFormValues) {
     setIsUpdatingPassword(true);
-    const token = localStorage.getItem('token');
+    const userDataString = localStorage.getItem('userData');
+    if (!userDataString) {
+        toast({ variant: 'destructive', title: 'Error', description: 'User not logged in.' });
+        setIsUpdatingPassword(false);
+        return;
+    }
+    const token = JSON.parse(userDataString).token;
     
     try {
         const API_URL = `${getApiBaseUrl()}/users/account/password/change/`;

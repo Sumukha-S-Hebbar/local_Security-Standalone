@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -51,10 +52,12 @@ export default function AgencyAccountPage() {
 
   useEffect(() => {
     if(typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        const userData = localStorage.getItem('user');
-        if (orgData) setAgency(JSON.parse(orgData));
-        if (userData) setUser(JSON.parse(userData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setAgency(userData.user.organization);
+            setUser(userData.user.user);
+        }
     }
     setIsLoading(false);
   }, []);

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -126,6 +127,7 @@ export default function AgencyGuardsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -147,13 +149,12 @@ export default function AgencyGuardsPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        const userData = localStorage.getItem('user');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
-        }
-        if (userData) {
-            setLoggedInUser(JSON.parse(userData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setLoggedInOrg(userData.user.organization);
+            setLoggedInUser(userData.user.user);
+            setToken(userData.token);
         }
     }
   }, []);
@@ -161,7 +162,7 @@ export default function AgencyGuardsPage() {
   const fetchGuards = useCallback(async (status: 'checked-in' | 'checked-out', page: number) => {
     if (!loggedInOrg) return;
     setIsLoading(true);
-    const token = localStorage.getItem('token') || undefined;
+    
     const orgCode = loggedInOrg.code;
 
     const checkInStatus = status === 'checked-in' ? 'checked_in' : 'checked_out';
@@ -175,7 +176,7 @@ export default function AgencyGuardsPage() {
     const url = `/agency/${orgCode}/guards/list/?check_in_status=${checkInStatus}&${params.toString()}`;
 
     try {
-        const response = await fetchData<PaginatedGuardsResponse>(url, token);
+        const response = await fetchData<PaginatedGuardsResponse>(url, token || undefined);
         if (status === 'checked-in') {
             setCheckedInGuards(response?.results || []);
             setCheckedInCount(response?.count || 0);
@@ -188,7 +189,7 @@ export default function AgencyGuardsPage() {
     } finally {
         setIsLoading(false);
     }
-}, [loggedInOrg, toast, searchQuery]);
+}, [loggedInOrg, toast, searchQuery, token]);
 
 
   useEffect(() => {
@@ -240,11 +241,11 @@ export default function AgencyGuardsPage() {
           toast({ variant: "destructive", title: "Error", description: "User country not found. Cannot fetch regions." });
           return;
       }
-      const token = localStorage.getItem('token') || undefined;
+      
       const countryId = loggedInUser.country.id;
       const url = `/regions/?country=${countryId}`;
       try {
-        const data = await fetchData<{ regions: ApiRegion[] }>(url, token);
+        const data = await fetchData<{ regions: ApiRegion[] }>(url, token || undefined);
         setApiRegions(data?.regions || []);
         setIsAddDialogOpen(true);
       } catch (error) {
@@ -265,12 +266,11 @@ export default function AgencyGuardsPage() {
           }
           
           setIsCitiesLoading(true);
-          const token = localStorage.getItem('token') || undefined;
           const countryId = loggedInUser.country.id;
           const url = `/cities/?country=${countryId}&region=${watchedRegion}`;
 
           try {
-              const data = await fetchData<{ cities: ApiCity[] }>(url, token);
+              const data = await fetchData<{ cities: ApiCity[] }>(url, token || undefined);
               setApiCities(data?.cities || []);
           } catch (error) {
               console.error("Failed to fetch cities:", error);
@@ -289,7 +289,7 @@ export default function AgencyGuardsPage() {
         addGuardForm.setValue('city', '');
         fetchCities();
       }
-  }, [watchedRegion, loggedInUser, toast, addGuardForm]);
+  }, [watchedRegion, loggedInUser, toast, addGuardForm, token]);
 
 
   async function onUploadSubmit(values: z.infer<typeof uploadFormSchema>) {
@@ -316,7 +316,6 @@ export default function AgencyGuardsPage() {
         return;
     }
 
-    const token = localStorage.getItem('token');
     const API_URL = `${getApiBaseUrl()}/agency/${loggedInOrg.code}/guards/add/`;
 
     const payload = {
@@ -375,7 +374,6 @@ export default function AgencyGuardsPage() {
       return;
     }
     setIsRequestingSelfie(true);
-    const token = localStorage.getItem('token');
     const API_URL = `${getApiBaseUrl()}/agency/${loggedInOrg.code}/random_selfie/send_to_all/`;
 
     try {
