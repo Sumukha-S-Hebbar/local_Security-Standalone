@@ -4,6 +4,7 @@
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 type Module = {
   name: string;
@@ -19,14 +20,30 @@ const allModules: Module[] = [
   { name: 'Site Master', href: '#' },
 ];
 
-// In a real app, this would come from a user context or API call
-const MOCK_ENABLED_MODULES_FOR_USER = ['Security'];
-
 export function ModuleSwitcher({ portalHome }: { portalHome: '/agency/home' | '/towerco/home' }) {
   const pathname = usePathname();
+  const [enabledModules, setEnabledModules] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userDataString = localStorage.getItem('userData');
+      if (userDataString) {
+        try {
+          const userData = JSON.parse(userDataString);
+          const subscribed = userData?.user?.organization?.subscribed_modules || [];
+          // Normalize to lowercase for case-insensitive comparison
+          setEnabledModules(subscribed.map((m: string) => m.toLowerCase()));
+        } catch (error) {
+          console.error("Failed to parse user data for module switcher:", error);
+          setEnabledModules([]);
+        }
+      }
+    }
+  }, []);
 
   const isModuleEnabled = (moduleName: string) => {
-    return MOCK_ENABLED_MODULES_FOR_USER.includes(moduleName);
+    // Normalize to lowercase for case-insensitive comparison
+    return enabledModules.includes(moduleName.toLowerCase());
   };
   
   const getModuleHref = (module: Module) => {
