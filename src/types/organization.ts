@@ -1,4 +1,5 @@
 
+
 export type Organization = {
   id: number;
   name: string;
@@ -6,12 +7,15 @@ export type Organization = {
   role: string;
   type: string;
   logo: string | null;
+  global_consent?: boolean;
+  subscribed_modules?: string[];
   member: {
     id: number;
     employee_id: string | null;
     designation: string;
     profile_picture?: string;
     phone?: string;
+    can_consent?: boolean;
   };
 };
 
