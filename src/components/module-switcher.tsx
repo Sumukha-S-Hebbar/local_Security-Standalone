@@ -88,8 +88,6 @@ export function ModuleSwitcher({ portalHome }: { portalHome: '/agency/home' | '/
                 )}
                 aria-disabled={!enabled}
                 onClick={(e) => !enabled && e.preventDefault()}
-                target={module.name === 'Real Estate' ? '_blank' : undefined}
-                rel={module.name === 'Real Estate' ? 'noopener noreferrer' : undefined}
               >
                 {module.name}
               </Link>
