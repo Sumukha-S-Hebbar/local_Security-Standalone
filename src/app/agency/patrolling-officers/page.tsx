@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils';
 import { fetchData } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getApiBaseUrl } from '@/lib/get-api-url';
 
 type PaginatedPatrollingOfficers = {
     count: number;
@@ -124,13 +125,11 @@ export default function AgencyPatrollingOfficersPage() {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const orgData = localStorage.getItem('organization');
-            const userData = localStorage.getItem('user');
-            if (orgData) {
-                setLoggedInOrg(JSON.parse(orgData));
-            }
-            if (userData) {
-                setLoggedInUser(JSON.parse(userData));
+            const userDataString = localStorage.getItem('userData');
+            if (userDataString) {
+                const userData = JSON.parse(userDataString);
+                setLoggedInOrg(userData.user.organization);
+                setLoggedInUser(userData.user.user);
             }
         }
     }, []);
@@ -282,7 +281,7 @@ export default function AgencyPatrollingOfficersPage() {
         }
 
         const token = localStorage.getItem('token');
-        const API_URL = `${process.env.NEXT_PUBLIC_DJANGO_API_URL}/agency/${loggedInOrg.code}/patrol_officers/add/`;
+        const API_URL = `${getApiBaseUrl()}/agency/${loggedInOrg.code}/patrol_officers/add/`;
         
         const payload = {
             ...values,
@@ -708,3 +707,5 @@ export default function AgencyPatrollingOfficersPage() {
       </>
     );
 }
+
+    

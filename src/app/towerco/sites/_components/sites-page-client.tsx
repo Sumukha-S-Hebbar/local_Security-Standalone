@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -148,13 +149,11 @@ export function SitesPageClient() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        const userData = localStorage.getItem('user');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
-        }
-        if (userData) {
-            setLoggedInUser(JSON.parse(userData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setLoggedInOrg(userData.user.organization);
+            setLoggedInUser(userData.user.user);
         }
     }
   }, []);
@@ -1057,3 +1056,5 @@ export function SitesPageClient() {
     </div>
   );
 }
+
+    
