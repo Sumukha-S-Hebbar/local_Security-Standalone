@@ -117,6 +117,7 @@ export default function SiteReportPage() {
 
   const fetchSiteReport = useCallback(async (url: string, isFiltering: boolean = false) => {
     if (!token) return;
+
     if (isFiltering) {
       setIsIncidentsLoading(true);
     } else {
@@ -127,29 +128,26 @@ export default function SiteReportPage() {
         const response = await fetchData<{data: SiteReportData}>(url, token);
         const data = response?.data;
         
-        if (isFiltering) {
-            setPaginatedIncidents(data?.incidents || null);
-        } else {
-            if (data) {
-                setReportData(data);
-                setPaginatedIncidents(data.incidents || null);
-            } else {
-                setReportData(null);
-            }
+        if (data) {
+            setReportData(data);
+            setPaginatedIncidents(data.incidents || null);
+        } else if (!isFiltering) {
+            // Only set to null on initial load failure
+            setReportData(null);
         }
     } catch (error) {
         console.error("Failed to fetch site report:", error);
+        if (!isFiltering) {
+            setReportData(null);
+        }
         toast({
             variant: "destructive",
             title: "Error",
             description: "Could not load site report data.",
         });
     } finally {
-        if (isFiltering) {
-          setIsIncidentsLoading(false);
-        } else {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
+        setIsIncidentsLoading(false);
     }
   }, [toast, token]);
   
@@ -157,6 +155,8 @@ export default function SiteReportPage() {
     if (loggedInOrg && siteId && token) {
       const baseUrl = `/orgs/${loggedInOrg.code}/site/${siteId}/`;
       const params = new URLSearchParams();
+      
+      const isFiltering = selectedYear !== 'all' || selectedMonth !== 'all' || selectedStatus !== 'all';
 
       if (selectedYear !== 'all') params.append('year', selectedYear);
       if (selectedMonth !== 'all') params.append('month', (parseInt(selectedMonth, 10) + 1).toString());
@@ -171,8 +171,7 @@ export default function SiteReportPage() {
       }
       
       const fullUrl = `${baseUrl}?${params.toString()}`;
-      // A filter is being applied if there are any query params
-      fetchSiteReport(fullUrl, params.toString().length > 0); 
+      fetchSiteReport(fullUrl, isFiltering); 
     }
   }, [loggedInOrg, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport, token]);
 
@@ -607,3 +606,5 @@ export default function SiteReportPage() {
     </div>
   );
 }
+
+    
