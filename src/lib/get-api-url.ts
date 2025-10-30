@@ -18,10 +18,6 @@ export const getApiBaseUrl = (): string => {
         return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8001/api/v2';
     }
 
-    // For deployed environments (e.g., are.towerbuddy.tel, ind.towerbuddy.tel), construct the URL dynamically.
-    if(hostname === 'ken.towerbuddy.tel') {
-       return `${protocol}//${hostname}:8001/api/v2`;
-    }
-
-    return `${protocol}//${hostname}:8000/security/api`;
+    // For any deployed environment (e.g., ken.towerbuddy.tel, are.towerbuddy.tel), construct the URL dynamically.
+    return `${protocol}//${hostname}:8001/api/v2`;
 };
