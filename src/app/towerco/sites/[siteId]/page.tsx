@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -94,6 +95,7 @@ export default function SiteReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isIncidentsLoading, setIsIncidentsLoading] = useState(false);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -104,27 +106,34 @@ export default function SiteReportPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          setLoggedInOrg(userData.user.organization);
+          setToken(userData.token);
         }
     }
   }, []);
 
   const fetchSiteReport = useCallback(async (url: string, isFiltering: boolean = false) => {
+    if (!token) return;
     if (isFiltering) {
       setIsIncidentsLoading(true);
     } else {
       setIsLoading(true);
     }
-    const token = localStorage.getItem('token') || undefined;
+    
     try {
-        const data = await fetchData<SiteReportData>(url, token);
-        if (isFiltering) {
-            setPaginatedIncidents(data?.incidents || null);
+        const data = await fetchData<{data: SiteReportData}>(url, token);
+        if (data?.data) {
+          if (isFiltering) {
+              setPaginatedIncidents(data.data.incidents || null);
+          } else {
+              setReportData(data.data);
+              setPaginatedIncidents(data.data.incidents || null);
+          }
         } else {
-            setReportData(data);
-            setPaginatedIncidents(data?.incidents || null);
+           setReportData(null);
         }
     } catch (error) {
         console.error("Failed to fetch site report:", error);
@@ -140,15 +149,15 @@ export default function SiteReportPage() {
           setIsLoading(false);
         }
     }
-  }, [toast]);
+  }, [toast, token]);
   
   useEffect(() => {
-    if (loggedInOrg && siteId) {
+    if (loggedInOrg && siteId && token) {
       const baseUrl = `/orgs/${loggedInOrg.code}/site/${siteId}/`;
       const params = new URLSearchParams();
 
       if (selectedYear !== 'all') params.append('year', selectedYear);
-      if (selectedMonth !== 'all' && selectedMonth !== 'all') params.append('month', (parseInt(selectedMonth) + 1).toString());
+      if (selectedMonth !== 'all') params.append('month', (parseInt(selectedMonth, 10)).toString());
       if (selectedStatus !== 'all') {
         let apiStatus = '';
         if (selectedStatus === 'under-review') {
@@ -160,26 +169,26 @@ export default function SiteReportPage() {
       }
       
       const fullUrl = `${baseUrl}?${params.toString()}`;
-      // A change in a filter should fetch the whole report to update incident trend too
       fetchSiteReport(fullUrl, false); 
     }
-  }, [loggedInOrg, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport]);
+  }, [loggedInOrg, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport, token]);
 
 
   const handleIncidentPagination = useCallback(async (url: string | null) => {
-      if (!url) return;
+      if (!url || !token) return;
       setIsIncidentsLoading(true);
-      const token = localStorage.getItem('token') || undefined;
       try {
-        const data = await fetchData<SiteReportData>(url, token);
-        setPaginatedIncidents(data?.incidents || null);
+        const data = await fetchData<{ incidents: PaginatedIncidents }>(url, token);
+        if (data) {
+          setPaginatedIncidents(data.incidents || null);
+        }
       } catch (error) {
         console.error("Failed to fetch paginated incidents:", error);
         toast({ variant: 'destructive', title: 'Error', description: 'Failed to load next page of incidents.' });
       } finally {
         setIsIncidentsLoading(false);
       }
-  }, [toast]);
+  }, [toast, token]);
 
   
   const availableYears = useMemo(() => {
@@ -595,3 +604,5 @@ export default function SiteReportPage() {
     </div>
   );
 }
+
+    
