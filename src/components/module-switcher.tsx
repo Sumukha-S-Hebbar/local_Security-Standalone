@@ -43,10 +43,16 @@ export function ModuleSwitcher({ portalHome }: { portalHome: '/agency/home' | '/
 
   const isModuleEnabled = (moduleName: string) => {
     const lowerCaseModuleName = moduleName.toLowerCase();
+    
     // Handle the specific case for "Real Estate" vs "realestate"
     if (lowerCaseModuleName === 'real estate') {
       return enabledModules.includes('realestate');
     }
+    // Handle "Site Master" vs "site master"
+    if (lowerCaseModuleName === 'site master') {
+        return enabledModules.includes('site master');
+    }
+
     return enabledModules.includes(lowerCaseModuleName);
   };
   
