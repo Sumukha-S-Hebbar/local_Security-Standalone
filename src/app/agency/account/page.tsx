@@ -56,7 +56,13 @@ export default function AgencyAccountPage() {
         if (userDataString) {
             const userData = JSON.parse(userDataString);
             setAgency(userData.user.organization);
-            setUser(userData.user.user);
+            
+            // Combine user and country details into one user object
+            const fullUser = {
+                ...userData.user.user,
+                country: userData.user.country,
+            };
+            setUser(fullUser);
         }
     }
     setIsLoading(false);
@@ -293,7 +299,5 @@ export default function AgencyAccountPage() {
     </div>
   );
 }
-
-    
 
     
