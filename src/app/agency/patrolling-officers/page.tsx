@@ -104,8 +104,8 @@ export default function AgencyPatrollingOfficersPage() {
     const [patrollingOfficers, setPatrollingOfficers] = useState<ApiPatrollingOfficer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
-    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string | null>(null);
+    const [countryId, setCountryId] = useState<number | null>(null);
+    const [token, setToken] = useState<string|null>(null);
 
     const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -125,15 +125,15 @@ export default function AgencyPatrollingOfficersPage() {
 
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const userDataString = localStorage.getItem('userData');
-            if (userDataString) {
-                const userData = JSON.parse(userDataString);
-                setLoggedInOrg(userData.user.organization);
-                setLoggedInUser(userData.user.user);
-                setToken(userData.token);
-            }
+     if (typeof window !== 'undefined') {
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            setLoggedInOrg(userData.user.organization);
+            setCountryId(userData.user.country?.id);
+            setToken(userData.token);
         }
+     }
     }, []);
 
     const fetchPatrollingOfficers = useCallback(async (page: number = 1) => {
@@ -169,7 +169,11 @@ export default function AgencyPatrollingOfficersPage() {
     
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchQuery]);
+        if (loggedInOrg) {
+            fetchPatrollingOfficers(1);
+        }
+    }, [searchQuery, loggedInOrg, fetchPatrollingOfficers]);
+
 
     const handlePagination = useCallback(async (url: string | null) => {
         if (!url || !loggedInOrg || !token) return;
@@ -203,11 +207,11 @@ export default function AgencyPatrollingOfficersPage() {
     const watchedRegion = addForm.watch('region');
 
     const handleAddPatrollingOfficerClick = async () => {
-        if (!loggedInUser || !loggedInUser.country?.id || !token) {
+        if (!countryId || !token) {
             toast({ variant: "destructive", title: "Error", description: "User country not found. Cannot fetch regions." });
             return;
         }
-        const countryId = loggedInUser.country.id;
+        
         const url = `/regions/?country=${countryId}`;
         try {
             const data = await fetchData<{ regions: ApiRegion[] }>(url, token);
@@ -225,13 +229,12 @@ export default function AgencyPatrollingOfficersPage() {
     
     useEffect(() => {
         async function fetchCities() {
-            if (!watchedRegion || !loggedInUser || !loggedInUser.country?.id || !token) {
+            if (!watchedRegion || !countryId || !token) {
                 setApiCities([]);
                 return;
             }
             
             setIsCitiesLoading(true);
-            const countryId = loggedInUser.country.id;
             const url = `/cities/?country=${countryId}&region=${watchedRegion}`;
 
             try {
@@ -254,7 +257,7 @@ export default function AgencyPatrollingOfficersPage() {
           addForm.setValue('city', '');
           fetchCities();
         }
-    }, [watchedRegion, loggedInUser, toast, addForm, token]);
+    }, [watchedRegion, countryId, toast, addForm, token]);
 
     async function onUploadSubmit(values: z.infer<typeof uploadFormSchema>) {
         setIsUploading(true);
@@ -705,4 +708,3 @@ export default function AgencyPatrollingOfficersPage() {
     );
 }
 
-    
