@@ -203,7 +203,7 @@ export default function AgencyAccountPage() {
                 </div>
                 <div className="space-y-1">
                     <p className="text-muted-foreground font-medium">Phone</p>
-                    <p className="font-semibold">{agency.member?.phone || 'Not available'}</p>
+                    <p className="font-semibold">{agency.member?.phone ? `${user.country?.phone || ''} ${agency.member.phone}` : 'Not available'}</p>
                 </div>
                 {user.country && (
                     <div className="space-y-1">
