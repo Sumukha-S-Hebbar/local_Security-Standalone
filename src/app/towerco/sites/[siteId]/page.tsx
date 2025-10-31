@@ -81,6 +81,7 @@ type SiteReportData = {
     guard_details: (Partial<Guard> & { id: number, user: string, email: string, first_name: string, last_name: string | null, phone: string, profile_picture?: string })[];
     incident_trend: { month: string; count: number }[];
     incidents: PaginatedIncidents;
+    geofence_perimeter?: number | null;
 };
 
 
@@ -144,12 +145,15 @@ export default function SiteReportPage() {
     const fullUrl = `${baseUrl}?${params.toString()}`;
 
     try {
-        const response = await fetchData<{data: SiteReportData}>(fullUrl, token);
-        const data = response?.data;
+        const data = await fetchData<SiteReportData>(fullUrl, token);
         
         if (data) {
+          if (isFiltering) {
+            setPaginatedIncidents(data.incidents || null);
+          } else {
             setReportData(data);
             setPaginatedIncidents(data.incidents || null);
+          }
         } else {
              setReportData(null);
         }
@@ -171,7 +175,7 @@ export default function SiteReportPage() {
     if (loggedInOrg && token) {
       fetchSiteReport(); 
     }
-  }, [loggedInOrg, token, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport]);
+  }, [loggedInOrg, token, siteId, selectedYear, selectedMonth, selectedStatus]);
 
 
   const handleIncidentPagination = useCallback(async (url: string | null) => {
