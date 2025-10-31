@@ -259,19 +259,33 @@ export function SitesPageClient() {
   }, [assignedSites]);
 
   useEffect(() => {
-      async function fetchFilterRegions() {
-          if (!loggedInUser || !loggedInUser.country || !token) return;
-          const countryId = loggedInUser.country.id;
-          const url = `/regions/?country=${countryId}`;
-          try {
-              const data = await fetchData<{ regions: ApiRegion[] }>(url, token);
-              setFilterRegions(data?.regions || []);
-          } catch (error) {
-              console.error("Failed to fetch regions for filters:", error);
-          }
+    const fetchFilterRegions = async () => {
+      if (token) {
+        try {
+          const userDataString = localStorage.getItem('userData');
+          if (!userDataString) return;
+          const userData = JSON.parse(userDataString);
+          const countryId = userData?.user?.country?.id;
+
+          if (!countryId) return;
+
+          const data = await fetchData<{ regions: ApiRegion[] }>(
+            `/regions/?country=${countryId}`,
+            token
+          );
+          setFilterRegions(data?.regions || []);
+        } catch (error) {
+          console.error('Failed to fetch regions for filters:', error);
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not load regions for filtering.',
+          });
+        }
       }
-      fetchFilterRegions();
-  }, [loggedInUser, token]);
+    };
+    fetchFilterRegions();
+  }, [token, toast]);
 
   useEffect(() => {
       async function fetchCitiesForFilter(regionId: string, setCities: React.Dispatch<React.SetStateAction<ApiCity[]>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) {
@@ -787,4 +801,3 @@ export function SitesPageClient() {
     </div>
   );
 }
-
