@@ -99,6 +99,7 @@ export default function AgencySiteReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isIncidentsLoading, setIsIncidentsLoading] = useState(false);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -108,20 +109,23 @@ export default function AgencySiteReportPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-        const orgData = localStorage.getItem('organization');
-        if (orgData) {
-            setLoggedInOrg(JSON.parse(orgData));
+        const userDataString = localStorage.getItem('userData');
+        if (userDataString) {
+          const userData = JSON.parse(userDataString);
+          setLoggedInOrg(userData.user.organization);
+          setToken(userData.token);
         }
     }
   }, []);
   
   const fetchSiteReport = useCallback(async (url: string, isFiltering: boolean = false) => {
+    if (!token) return;
     if (isFiltering) {
       setIsIncidentsLoading(true);
     } else {
       setIsLoading(true);
     }
-    const token = localStorage.getItem('token') || undefined;
+    
     try {
         const data = await fetchData<SiteReportData>(url, token);
         if (isFiltering) {
@@ -144,12 +148,14 @@ export default function AgencySiteReportPage() {
           setIsLoading(false);
         }
     }
-  }, [toast]);
+  }, [toast, token]);
   
   useEffect(() => {
-    if (loggedInOrg && siteId) {
+    if (loggedInOrg && siteId && token) {
       const baseUrl = `/agency/${loggedInOrg.code}/site/${siteId}/`;
       const params = new URLSearchParams();
+
+      const isFiltering = selectedYear !== 'all' || selectedMonth !== 'all' || selectedStatus !== 'all';
 
       if (selectedYear !== 'all') params.append('year', selectedYear);
       if (selectedMonth !== 'all' && selectedMonth !== 'all') params.append('month', (parseInt(selectedMonth) + 1).toString());
@@ -166,12 +172,11 @@ export default function AgencySiteReportPage() {
       const fullUrl = `${baseUrl}?${params.toString()}`;
       fetchSiteReport(fullUrl, false); 
     }
-  }, [loggedInOrg, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport]);
+  }, [loggedInOrg, siteId, selectedYear, selectedMonth, selectedStatus, fetchSiteReport, token]);
   
   const handleIncidentPagination = useCallback(async (url: string | null) => {
-      if (!url) return;
+      if (!url || !token) return;
       setIsIncidentsLoading(true);
-      const token = localStorage.getItem('token') || undefined;
       try {
         const data = await fetchData<SiteReportData>(url, token);
         setPaginatedIncidents(data?.incidents || null);
@@ -181,7 +186,7 @@ export default function AgencySiteReportPage() {
       } finally {
         setIsIncidentsLoading(false);
       }
-  }, [toast]);
+  }, [toast, token]);
 
   const availableYears = useMemo(() => {
     if (!reportData?.incidents?.results) return [];
@@ -274,7 +279,7 @@ export default function AgencySiteReportPage() {
     }
   };
   
-  if (isLoading) {
+  if (isLoading || !loggedInOrg) {
     return (
         <div className="p-4 sm:p-6 lg:p-8 space-y-6">
             <div className="flex items-center gap-4">
