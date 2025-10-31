@@ -131,12 +131,24 @@ export function SitesPageClient() {
     if (status === 'Assigned') {
         if (assignedSearchQuery) params.append('search', assignedSearchQuery);
         if (selectedPatrollingOfficerFilter !== 'all') params.append('patrol_officer', selectedPatrollingOfficerFilter);
-        if (assignedSelectedRegion !== 'all') params.append('region', assignedSelectedRegion);
-        if (assignedSelectedCity !== 'all') params.append('city', assignedSelectedCity);
+        if (assignedSelectedRegion !== 'all') {
+          const region = filterRegions.find(r => r.id.toString() === assignedSelectedRegion);
+          if (region) params.append('region', region.name);
+        }
+        if (assignedSelectedCity !== 'all') {
+            const city = assignedFilterCities.find(c => c.id.toString() === assignedSelectedCity);
+            if(city) params.append('city', city.name);
+        }
     } else {
         if (unassignedSearchQuery) params.append('search', unassignedSearchQuery);
-        if (unassignedSelectedRegion !== 'all') params.append('region', unassignedSelectedRegion);
-        if (unassignedSelectedCity !== 'all') params.append('city', unassignedSelectedCity);
+        if (unassignedSelectedRegion !== 'all') {
+            const region = filterRegions.find(r => r.id.toString() === unassignedSelectedRegion);
+            if(region) params.append('region', region.name);
+        }
+        if (unassignedSelectedCity !== 'all') {
+            const city = unassignedFilterCities.find(c => c.id.toString() === unassignedSelectedCity);
+            if(city) params.append('city', city.name);
+        }
     }
 
     try {
@@ -157,7 +169,7 @@ export function SitesPageClient() {
     } finally {
         setIsLoading(false);
     }
-  }, [loggedInOrg, token, toast, assignedSearchQuery, selectedPatrollingOfficerFilter, assignedSelectedRegion, assignedSelectedCity, unassignedSearchQuery, unassignedSelectedRegion, unassignedSelectedCity]);
+  }, [loggedInOrg, token, toast, assignedSearchQuery, selectedPatrollingOfficerFilter, assignedSelectedRegion, assignedSelectedCity, unassignedSearchQuery, unassignedSelectedRegion, unassignedSelectedCity, filterRegions, assignedFilterCities, unassignedFilterCities]);
 
 
   const fetchSupportingData = useCallback(async () => {
@@ -269,7 +281,12 @@ export function SitesPageClient() {
           }
           setLoading(true);
           const countryId = loggedInUser.country.id;
-          const url = `/cities/?country=${countryId}&region=${regionId}`;
+          const region = filterRegions.find(r => r.id.toString() === regionId);
+          if (!region) {
+              setLoading(false);
+              return;
+          }
+          const url = `/cities/?country=${countryId}&region=${region.name}`;
           try {
               const data = await fetchData<{ cities: ApiCity[] }>(url, token);
               setCities(data?.cities || []);
@@ -287,7 +304,7 @@ export function SitesPageClient() {
           fetchCitiesForFilter(unassignedSelectedRegion, setUnassignedFilterCities, setIsUnassignedCitiesLoading);
       }
 
-  }, [assignedSelectedRegion, unassignedSelectedRegion, activeTab, loggedInUser, token]);
+  }, [assignedSelectedRegion, unassignedSelectedRegion, activeTab, loggedInUser, token, filterRegions]);
 
 
   const handleAssignedRegionChange = (region: string) => {
@@ -570,7 +587,9 @@ export function SitesPageClient() {
                       <SelectContent>
                         <SelectItem value="all" className="font-medium">All Regions</SelectItem>
                         {filterRegions.map((region) => (
-                          <SelectItem key={region.id} value={region.id.toString()} className="font-medium">{region.name}</SelectItem>
+                          <SelectItem key={region.id} value={region.id.toString()} className="font-medium">
+                                    {region.name}
+                                </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -768,5 +787,3 @@ export function SitesPageClient() {
     </div>
   );
 }
-
-    
