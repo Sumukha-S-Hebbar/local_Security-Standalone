@@ -287,20 +287,23 @@ export function SitesPageClient() {
     fetchFilterRegions();
   }, [token, toast]);
 
-  useEffect(() => {
+ useEffect(() => {
       async function fetchCitiesForFilter(regionId: string, setCities: React.Dispatch<React.SetStateAction<ApiCity[]>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) {
-          if (regionId === 'all' || !loggedInUser || !loggedInUser.country || !token) {
+          const userDataString = localStorage.getItem('userData');
+          if (!userDataString || regionId === 'all') {
               setCities([]);
               return;
           }
-          setLoading(true);
-          const countryId = loggedInUser.country.id;
-          const region = filterRegions.find(r => r.id.toString() === regionId);
-          if (!region) {
-              setLoading(false);
+          const userData = JSON.parse(userDataString);
+          const countryId = userData?.user?.country?.id;
+          
+          if (!countryId || !token) {
+              setCities([]);
               return;
           }
-          const url = `/cities/?country=${countryId}&region=${region.name}`;
+
+          setLoading(true);
+          const url = `/cities/?country=${countryId}&region=${regionId}`;
           try {
               const data = await fetchData<{ cities: ApiCity[] }>(url, token);
               setCities(data?.cities || []);
@@ -313,12 +316,14 @@ export function SitesPageClient() {
       }
 
       if(activeTab === 'assigned') {
+          setAssignedSelectedCity('all');
           fetchCitiesForFilter(assignedSelectedRegion, setAssignedFilterCities, setIsAssignedCitiesLoading);
       } else {
+          setUnassignedSelectedCity('all');
           fetchCitiesForFilter(unassignedSelectedRegion, setUnassignedFilterCities, setIsUnassignedCitiesLoading);
       }
 
-  }, [assignedSelectedRegion, unassignedSelectedRegion, activeTab, loggedInUser, token, filterRegions]);
+  }, [assignedSelectedRegion, unassignedSelectedRegion, activeTab, token]);
 
 
   const handleAssignedRegionChange = (region: string) => {
