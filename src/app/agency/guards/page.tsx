@@ -214,7 +214,7 @@ export default function AgencyGuardsPage() {
             fetchGuards('checked-out', 1);
         }
       }
-  }, [searchQuery, loggedInOrg, fetchGuards]);
+  }, [searchQuery, loggedInOrg, fetchGuards, activeTab]);
 
     const handlePagination = (direction: 'next' | 'prev') => {
         if (activeTab === 'checked-in') {
@@ -884,7 +884,3 @@ export default function AgencyGuardsPage() {
     </>
   );
 }
-
-    
-
-    
