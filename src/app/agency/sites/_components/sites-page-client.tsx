@@ -52,6 +52,7 @@ import { Input } from '@/components/ui/input';
 import { fetchData } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getApiBaseUrl } from '@/lib/get-api-url';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -392,11 +393,15 @@ export function SitesPageClient() {
       return;
     }
 
-    const API_URL = `/agency/${loggedInOrg.code}/sites/${siteId}/assign_personnel/`;
+    const API_URL = `${getApiBaseUrl()}/agency/${loggedInOrg.code}/sites/${siteId}/assign_personnel/`;
 
     try {
-        const response = await fetchData(API_URL, token, {
+        const response = await fetch(API_URL, {
             method: 'POST',
+            headers: {
+                'Authorization': `Token ${token}`,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 patrol_officer_id: parseInt(patrollingOfficerId, 10),
                 guard_ids: guardIds.map(id => parseInt(id, 10)),
@@ -404,9 +409,15 @@ export function SitesPageClient() {
             })
         });
 
+        const responseData = await response.json();
+
+        if (!response.ok) {
+            throw new Error(responseData.detail || 'Assignment failed.');
+        }
+
         toast({
           title: 'Site Assigned Successfully',
-          description: (response as any).message || 'Personnel have been assigned to the site.',
+          description: responseData.message || 'Personnel have been assigned to the site.',
         });
 
         fetchSites('Assigned', 1);
