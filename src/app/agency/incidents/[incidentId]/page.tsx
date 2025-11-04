@@ -577,4 +577,52 @@ export default function AgencyIncidentReportPage() {
                   <AlertTitle>Awaiting Resolution</AlertTitle>
                   <AlertDescription>
                     This incident report has been submitted. The TOWERCO/MNO will review and resolve this incident. No further action is required from the agency at this time.
-                  </Aler…
+                  </AlertDescription>
+                </Alert>
+              </div>
+            )}
+            
+            {incident.incident_status === 'Resolved' && resolvedMediaUrls.length > 0 && (
+                <div className="pt-6">
+                     {renderMediaGallery(resolvedMediaUrls, "Resolution Media Evidence", "resolution document")}
+                </div>
+            )}
+
+            {incident.incident_status === 'Resolved' && incident.resolution_notes && (
+                 <div className="pt-6">
+                    <h4 className="font-semibold mb-2 text-lg">Resolution Notes</h4>
+                    <p className="text-muted-foreground">{incident.resolution_notes}</p>
+                </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+    {lightboxImage && (
+      <div 
+        className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 animate-in fade-in-0"
+        onClick={() => setLightboxImage(null)}
+      >
+        <button 
+            className="absolute top-4 right-4 text-white hover:text-white/80 transition-opacity"
+            onClick={() => setLightboxImage(null)}
+        >
+            <X className="h-8 w-8" />
+        </button>
+        <div className="relative max-w-4xl max-h-full" onClick={(e) => e.stopPropagation()}>
+            <Image 
+                src={lightboxImage} 
+                alt="Enlarged incident evidence" 
+                width={1200}
+                height={800}
+                unoptimized
+                className="rounded-lg object-contain max-w-full max-h-[90vh]"
+            />
+        </div>
+      </div>
+    )}
+    </>
+  );
+}
+
+    
