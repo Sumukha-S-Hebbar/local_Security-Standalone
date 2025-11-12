@@ -82,7 +82,7 @@ export function ModuleSwitcher({ portalHome }: { portalHome: '/agency/home' | '/
                 className={cn(
                   'flex items-center px-3 font-semibold transition-colors',
                   enabled
-                    ? 'text-primary hover:text-[#ff5200]'
+                    ? 'text-primary hover:text-[#ff8200]'
                     : 'text-muted-foreground/60 cursor-not-allowed',
                   isActive && 'bg-destructive/10 text-destructive h-[5vh] py-0 border-l border-r border-destructive',
                   !isActive && ''
