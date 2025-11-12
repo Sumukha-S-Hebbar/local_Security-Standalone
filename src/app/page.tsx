@@ -171,9 +171,9 @@ export default function RootPage() {
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-xl shadow-2xl overflow-hidden">
         
-        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between">
-            <div className="flex-grow flex flex-col justify-center items-center text-center">
-                <div className="flex items-center gap-3 mb-6">
+        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between text-center">
+            <div className="flex-grow flex flex-col justify-center items-center">
+                <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="bg-white rounded-full p-2">
                     <svg
                         className="w-10 h-10 text-header"
@@ -191,17 +191,7 @@ export default function RootPage() {
                 </div>
                 <h1 className="text-3xl font-bold">Secure Buddy</h1>
                 </div>
-                <h2 className="text-2xl font-bold mb-6">WHY SIGN UP?</h2>
-                <ul className="space-y-4 text-lg flex flex-col items-start">
-                    <li className="flex items-center gap-3">
-                        <CheckIcon className="w-6 h-6" />
-                        <span className='font-medium'>Centralized Resource Management</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <CheckIcon className="w-6 h-6" />
-                        <span className='font-medium'>One Platform For All</span>
-                    </li>
-                </ul>
+                <h2 className="text-4xl font-bold tracking-wider">START EARNING<br/>TODAY</h2>
             </div>
             <div className="mt-auto text-center text-xs">
                 <Link
