@@ -192,15 +192,15 @@ export default function RootPage() {
                 <h1 className="text-3xl font-bold">Secure Buddy</h1>
                 </div>
                 <h2 className="text-2xl font-bold mb-6">WHY SIGN UP?</h2>
-                <ul className="space-y-4 text-lg inline-block text-left">
-                <li className="flex items-center gap-3">
-                    <CheckIcon className="w-6 h-6" />
-                    <span className='font-medium'>Centralized Resource Management</span>
-                </li>
-                <li className="flex items-center gap-3">
-                    <CheckIcon className="w-6 h-6" />
-                    <span className='font-medium'>One Platform For All</span>
-                </li>
+                <ul className="space-y-4 text-lg inline-block">
+                    <li className="flex items-center gap-3">
+                        <CheckIcon className="w-6 h-6" />
+                        <span className='font-medium'>Centralized Resource Management</span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                        <CheckIcon className="w-6 h-6" />
+                        <span className='font-medium'>One Platform For All</span>
+                    </li>
                 </ul>
             </div>
             <div className="mt-auto text-center text-xs">
