@@ -171,8 +171,8 @@ export default function RootPage() {
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-4 my-8 rounded-xl shadow-2xl overflow-hidden">
         
         {/* Left Column */}
-        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 sm:p-12 flex flex-col items-center md:items-start text-center md:text-left">
-          <div className="flex flex-col justify-center flex-grow">
+        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 sm:p-12 flex flex-col">
+          <div className="flex-grow flex flex-col justify-center items-center md:items-start text-center md:text-left">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-white rounded-full p-2">
                  <svg
@@ -342,9 +342,9 @@ export default function RootPage() {
                         </button>
                       </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                        id="terms" 
+                  <div className="flex items-start space-x-2">
+                     <Checkbox
+                        id="terms"
                         checked={termsAccepted}
                         onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
                     />
@@ -354,16 +354,15 @@ export default function RootPage() {
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           I agree to the{' '}
-                        </label>
                            <Link 
                               href="https://towerbuddy.tel/terms-and-conditions" 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-sm font-medium text-blue-600 hover:underline"
-                              onClick={(e) => e.stopPropagation()}
+                              className="font-medium text-accent hover:underline"
                           >
                               Terms &amp; Conditions
                           </Link>
+                        </label>
                     </div>
                   </div>
                 </CardContent>
