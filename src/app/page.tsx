@@ -49,6 +49,7 @@ export default function RootPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordUp, setShowPasswordUp] = useState(false);
   const [showConfirmPasswordUp, setShowConfirmPasswordUp] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -342,19 +343,32 @@ export default function RootPage() {
                       </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="terms" />
-                    <Link 
-                        href="https://towerbuddy.tel/terms-and-conditions" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm font-medium text-blue-600 hover:underline"
-                    >
-                        Terms &amp; Conditions
-                    </Link>
+                    <Checkbox 
+                        id="terms" 
+                        checked={termsAccepted}
+                        onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                       <label
+                          htmlFor="terms"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          I agree to the{' '}
+                           <Link 
+                              href="https://towerbuddy.tel/terms-and-conditions" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium text-blue-600 hover:underline"
+                              onClick={(e) => e.stopPropagation()}
+                          >
+                              Terms &amp; Conditions
+                          </Link>
+                        </label>
+                    </div>
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-header hover:bg-header/90 text-lg py-6">Create Account &rarr;</Button>
+                  <Button className="w-full bg-header hover:bg-header/90 text-lg py-6" disabled={!termsAccepted}>Create Account &rarr;</Button>
                 </CardFooter>
               </Card>
             </TabsContent>
