@@ -171,38 +171,48 @@ export default function RootPage() {
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-xl shadow-2xl overflow-hidden">
         
-        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col">
-          <div className="flex-grow flex flex-col justify-center items-center md:items-start text-center md:text-left">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-white rounded-full p-2">
-                 <svg
-                    className="w-10 h-10 text-header"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                      opacity="0.3"
-                    />
-                    <path d="M12 4.5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm0 2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm0 10.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5-4.5z" />
-                    <path d="M7 12.5c0-.64.13-1.25.36-1.82-.55-.25-1.18-.38-1.86-.38-1.66 0-3 1.34-3 3s1.34 3 3 3c.68 0-1.31-.13-1.86-.38C7.13 13.75 7 13.14 7 12.5zm10 0c0-.64-.13-1.25-.36-1.82.55-.25 1.18-.38 1.86-.38 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.68 0-1.31-.13-1.86-.38.23-.57.36-1.18.36-1.82z" />
-                  </svg>
-              </div>
-              <h1 className="text-3xl font-bold">Secure Buddy</h1>
+        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between">
+            <div className="flex-grow flex flex-col justify-center items-center md:items-start text-center md:text-left">
+                <div className="flex items-center gap-3 mb-6">
+                <div className="bg-white rounded-full p-2">
+                    <svg
+                        className="w-10 h-10 text-header"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                        opacity="0.3"
+                        />
+                        <path d="M12 4.5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm0 2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm0 10.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5-4.5z" />
+                        <path d="M7 12.5c0-.64.13-1.25.36-1.82-.55-.25-1.18-.38-1.86-.38-1.66 0-3 1.34-3 3s1.34 3 3 3c.68 0-1.31-.13-1.86-.38C7.13 13.75 7 13.14 7 12.5zm10 0c0-.64-.13-1.25-.36-1.82.55-.25 1.18-.38 1.86-.38 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.68 0-1.31-.13-1.86-.38.23-.57.36-1.18.36-1.82z" />
+                    </svg>
+                </div>
+                <h1 className="text-3xl font-bold">Secure Buddy</h1>
+                </div>
+                <h2 className="text-2xl font-bold mb-6">WHY SIGN UP?</h2>
+                <ul className="space-y-4 text-lg">
+                <li className="flex items-center gap-3">
+                    <CheckIcon className="w-6 h-6" />
+                    <span className='font-medium'>Centralized Resource Management</span>
+                </li>
+                <li className="flex items-center gap-3">
+                    <CheckIcon className="w-6 h-6" />
+                    <span className='font-medium'>One Platform For All</span>
+                </li>
+                </ul>
             </div>
-            <h2 className="text-2xl font-bold mb-6">WHY SIGN UP?</h2>
-            <ul className="space-y-4 text-lg">
-              <li className="flex items-center gap-3">
-                <CheckIcon className="w-6 h-6" />
-                <span className='font-medium'>Centralized Resource Management</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckIcon className="w-6 h-6" />
-                <span className='font-medium'>One Platform For All</span>
-              </li>
-            </ul>
-          </div>
+            <div className="mt-auto text-center text-xs">
+                <Link
+                href="https://towerbuddy.tel/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-white text-blue-900 font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-200 transition-colors"
+                >
+                i4sight technologies | All Rights Reserved
+                </Link>
+            </div>
         </div>
 
         <div className="w-full md:w-3/5 bg-card text-card-foreground">
@@ -333,27 +343,27 @@ export default function RootPage() {
                         </div>
                     </div>
                     <div className="flex items-start space-x-2">
-                      <Checkbox
-                          id="terms"
-                          checked={termsAccepted}
-                          onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                      />
-                      <div className="grid gap-1.5 leading-none">
-                        <label
-                            htmlFor="terms"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            I agree to the{' '}
-                        </label>
-                        <Link 
-                              href="https://towerbuddy.tel/terms-and-conditions" 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="font-medium text-accent hover:underline text-sm"
-                          >
-                              Terms &amp; Conditions
-                          </Link>
-                      </div>
+                        <Checkbox
+                            id="terms"
+                            checked={termsAccepted}
+                            onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                            <label
+                                htmlFor="terms"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                I agree to the{' '}
+                                <Link
+                                href="https://towerbuddy.tel/terms-and-conditions"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-accent hover:underline text-sm"
+                                >
+                                Terms &amp; Conditions
+                                </Link>
+                            </label>
+                        </div>
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -362,16 +372,6 @@ export default function RootPage() {
                 </Card>
               </TabsContent>
             </Tabs>
-            <div className="mt-auto text-center text-xs text-header-foreground">
-                <Link 
-                href="https://towerbuddy.tel/privacy-policy" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-block bg-white text-blue-900 font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-200 transition-colors"
-                >
-                i4sight technologies | All Rights Reserved
-                </Link>
-            </div>
           </div>
         </div>
       </div>
