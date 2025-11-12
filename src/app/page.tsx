@@ -172,7 +172,7 @@ export default function RootPage() {
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-xl shadow-2xl overflow-hidden">
         
         <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between">
-            <div className="flex-grow flex flex-col justify-center items-center md:items-start text-center md:text-left">
+            <div className="flex-grow flex flex-col justify-center items-center text-center">
                 <div className="flex items-center gap-3 mb-6">
                 <div className="bg-white rounded-full p-2">
                     <svg
@@ -192,7 +192,7 @@ export default function RootPage() {
                 <h1 className="text-3xl font-bold">Secure Buddy</h1>
                 </div>
                 <h2 className="text-2xl font-bold mb-6">WHY SIGN UP?</h2>
-                <ul className="space-y-4 text-lg">
+                <ul className="space-y-4 text-lg inline-block text-left">
                 <li className="flex items-center gap-3">
                     <CheckIcon className="w-6 h-6" />
                     <span className='font-medium'>Centralized Resource Management</span>
@@ -378,5 +378,3 @@ export default function RootPage() {
     </div>
   );
 }
-
-    
