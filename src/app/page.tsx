@@ -193,10 +193,10 @@ export default function RootPage() {
                 </div>
                 <h1 className="text-3xl font-bold">Secure Buddy</h1>
                 </div>
-                {activeTab === 'signin' ? (
+                 {activeTab === 'signin' ? (
                   <div className="text-center">
                     <h2 className="text-4xl font-bold tracking-wider mb-6">WHY US?</h2>
-                    <ul className="space-y-4 text-lg inline-flex flex-col">
+                    <ul className="space-y-4 text-lg inline-flex flex-col items-start">
                         <li className="flex items-center gap-3">
                            <span className="font-bold">&gt;</span> One Platform For Everyone
                         </li>
@@ -206,7 +206,20 @@ export default function RootPage() {
                     </ul>
                   </div>
                 ) : (
-                  <h2 className="text-4xl font-bold tracking-wider">START EARNING<br/>TODAY</h2>
+                  <div className="text-center">
+                    <h2 className="text-4xl font-bold tracking-wider mb-6">WHY SIGN UP?</h2>
+                    <ul className="space-y-4 text-lg inline-flex flex-col items-start">
+                        <li className="flex items-center gap-3">
+                           <span className="font-bold">&gt;</span> It's Secure & Free
+                        </li>
+                        <li className="flex items-center gap-3">
+                           <span className="font-bold">&gt;</span> One Platform For Everyone
+                        </li>
+                        <li className="flex items-center gap-3">
+                           <span className="font-bold">&gt;</span> Centralized Resource Management
+                        </li>
+                    </ul>
+                  </div>
                 )}
             </div>
             <div className="text-center text-xs">
