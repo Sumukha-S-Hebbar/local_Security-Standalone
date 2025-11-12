@@ -33,5 +33,3 @@ export async function fetchData<T>(url: string, token?: string): Promise<T | nul
         throw error;
     }
 }
-
-    

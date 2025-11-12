@@ -269,7 +269,7 @@ export default function AgencyPatrollingOfficersPage() {
         });
         uploadForm.reset({ excelFile: undefined });
         setIsUploading(false);
-        setIsUploadDialogOpen(false);
+        setIsAddDialogOpen(false);
     }
 
     async function onAddSubmit(values: z.infer<typeof addPatrollingOfficerFormSchema>) {

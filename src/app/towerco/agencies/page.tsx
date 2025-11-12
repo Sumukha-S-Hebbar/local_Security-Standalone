@@ -326,7 +326,9 @@ export default function TowercoAgenciesPage() {
         }
 
         addAgencyForm.resetField('city');
-        fetchCities();
+        if (watchedRegion) {
+          fetchCities();
+        }
     }, [watchedRegion, loggedInUser, toast, addAgencyForm, token]);
 
     async function onUploadSubmit(values: z.infer<typeof uploadFormSchema>) {
@@ -342,7 +344,7 @@ export default function TowercoAgenciesPage() {
 
         uploadForm.reset({ excelFile: undefined });
         setIsUploading(false);
-        setIsUploadDialogOpen(false);
+        setIsAddAgencyDialogOpen(false);
     }
 
     async function onAddAgencySubmit(values: z.infer<typeof addAgencyFormSchema>) {
@@ -828,5 +830,3 @@ export default function TowercoAgenciesPage() {
         </div>
     );
 }
-
-    
