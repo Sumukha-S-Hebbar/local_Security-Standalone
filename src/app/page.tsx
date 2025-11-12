@@ -171,8 +171,8 @@ export default function RootPage() {
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-4 my-8 rounded-xl shadow-2xl overflow-hidden">
         
         {/* Left Column */}
-        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 sm:p-12 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-          <div className="flex-grow flex flex-col justify-center">
+        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 sm:p-12 flex flex-col justify-between items-center md:items-start text-center md:text-left">
+          <div className="flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-white rounded-full p-2">
                  <svg
@@ -354,6 +354,7 @@ export default function RootPage() {
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           I agree to the{' '}
+                        </label>
                            <Link 
                               href="https://towerbuddy.tel/terms-and-conditions" 
                               target="_blank" 
@@ -363,7 +364,6 @@ export default function RootPage() {
                           >
                               Terms &amp; Conditions
                           </Link>
-                        </label>
                     </div>
                   </div>
                 </CardContent>
