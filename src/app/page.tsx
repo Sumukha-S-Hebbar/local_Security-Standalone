@@ -51,6 +51,8 @@ export default function RootPage() {
   const [showPasswordUp, setShowPasswordUp] = useState(false);
   const [showConfirmPasswordUp, setShowConfirmPasswordUp] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [activeTab, setActiveTab] = useState('signin');
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -171,7 +173,7 @@ export default function RootPage() {
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto rounded-xl shadow-2xl overflow-hidden">
         
-        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between text-center">
+        <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-center text-center">
             <div className="flex-grow flex flex-col justify-center items-center">
                 <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="bg-white rounded-full p-2">
@@ -191,7 +193,24 @@ export default function RootPage() {
                 </div>
                 <h1 className="text-3xl font-bold">Secure Buddy</h1>
                 </div>
-                <h2 className="text-4xl font-bold tracking-wider">START EARNING<br/>TODAY</h2>
+                {activeTab === 'signin' ? (
+                  <h2 className="text-4xl font-bold tracking-wider">START EARNING<br/>TODAY</h2>
+                ) : (
+                  <div className="text-center">
+                    <h2 className="text-4xl font-bold tracking-wider mb-6">WHY SIGN UP?</h2>
+                    <ul className="space-y-4 text-lg inline-block text-left">
+                        <li className="flex items-center gap-3">
+                            <span className="font-bold">&gt;</span> It's Secure & Free
+                        </li>
+                        <li className="flex items-center gap-3">
+                           <span className="font-bold">&gt;</span> One Platform For Everyone
+                        </li>
+                        <li className="flex items-center gap-3">
+                           <span className="font-bold">&gt;</span> Centralized Resource Management
+                        </li>
+                    </ul>
+                  </div>
+                )}
             </div>
             <div className="mt-auto text-center text-xs">
                 <Link
@@ -207,7 +226,7 @@ export default function RootPage() {
 
         <div className="w-full md:w-3/5 bg-card text-card-foreground">
           <div className="p-8 flex flex-col justify-between h-full">
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs defaultValue="signin" className="w-full" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin" className="data-[state=active]:bg-header data-[state=active]:text-header-foreground">SIGN IN</TabsTrigger>
                 <TabsTrigger value="signup" className="data-[state=active]:bg-header data-[state=active]:text-header-foreground">SIGN UP</TabsTrigger>
