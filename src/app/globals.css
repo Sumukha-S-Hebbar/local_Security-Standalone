@@ -80,15 +80,6 @@
   }
 }
 
-@layer components {
-  .bg-login {
-    background-image: url('/background.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-}
-
 .highlight-row {
   animation: highlight-fade 2s ease-out;
 }
