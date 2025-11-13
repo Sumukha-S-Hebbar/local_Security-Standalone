@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -173,7 +174,7 @@ export default function RootPage() {
     <div 
       className="min-h-screen text-foreground flex items-center justify-center p-4"
       style={{
-        backgroundImage: "url('/background.png')",
+        backgroundImage: "url('/GG background.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
