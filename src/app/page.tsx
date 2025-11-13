@@ -177,7 +177,7 @@ export default function RootPage() {
         <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between">
             <div className="flex-grow flex flex-col justify-center items-center text-center">
                 <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative h-14 w-14">
+                <div className="relative h-20 w-20">
                     <Image
                       src="/GG logo without text.png"
                       alt="Global Guard Logo"
