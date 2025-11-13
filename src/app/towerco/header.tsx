@@ -18,7 +18,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ModuleSwitcher } from '@/components/module-switcher';
 
 export default function TowercoHeader() {
   const pathname = usePathname();
@@ -73,7 +72,6 @@ export default function TowercoHeader() {
       "bg-header text-header-foreground sticky top-0 z-50 transition-transform duration-300",
       !isVisible && "-translate-y-full"
     )}>
-      <ModuleSwitcher portalHome="/towerco/home" />
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
         <div className="flex items-center gap-6 flex-1">
           <Link href="/towerco/home" className="flex items-center gap-2 text-header-foreground">
