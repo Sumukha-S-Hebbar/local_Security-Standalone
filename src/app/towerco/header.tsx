@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Shield,
   LogOut,
@@ -73,9 +74,16 @@ export default function TowercoHeader() {
       !isVisible && "-translate-y-full"
     )}>
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
-        <div className="flex items-center gap-6 flex-1">
+        <div className="flex items-center gap-2 flex-1">
           <Link href="/towerco/home" className="flex items-center gap-2 text-header-foreground">
-            <Shield className="w-8 h-8" />
+            <div className="relative h-8 w-8">
+                <Image
+                  src="/GG logo without text.png"
+                  alt="Global Guard Logo"
+                  fill
+                  className="object-contain"
+                />
+            </div>
             <span className="text-xl font-bold">Global Guard</span>
           </Link>
         </div>
@@ -100,7 +108,14 @@ export default function TowercoHeader() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] bg-header text-header-foreground p-0">
                      <div className="flex items-center gap-2 p-4 border-b border-white/10">
-                        <Shield className="w-8 h-8" />
+                        <div className="relative h-8 w-8">
+                            <Image
+                            src="/GG logo without text.png"
+                            alt="Global Guard Logo"
+                            fill
+                            className="object-contain"
+                            />
+                        </div>
                         <div>
                             <h1 className="text-xl font-bold">Global Guard</h1>
                             <p className="text-xs">TOWERCO/MNO Portal</p>
