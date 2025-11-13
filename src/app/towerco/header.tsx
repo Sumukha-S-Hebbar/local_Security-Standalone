@@ -76,7 +76,7 @@ export default function TowercoHeader() {
       <div className="container mx-auto flex h-16 items-center px-4 md:px-6">
         <div className="flex items-center gap-2 flex-1">
           <Link href="/towerco/home" className="flex items-center gap-2 text-header-foreground">
-            <div className="relative h-8 w-8">
+            <div className="relative h-10 w-10">
                 <Image
                   src="/GG logo without text.png"
                   alt="Global Guard Logo"
@@ -108,7 +108,7 @@ export default function TowercoHeader() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] bg-header text-header-foreground p-0">
                      <div className="flex items-center gap-2 p-4 border-b border-white/10">
-                        <div className="relative h-8 w-8">
+                        <div className="relative h-10 w-10">
                             <Image
                             src="/GG logo without text.png"
                             alt="Global Guard Logo"
