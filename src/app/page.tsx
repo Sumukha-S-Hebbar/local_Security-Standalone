@@ -222,15 +222,16 @@ export default function RootPage() {
                   </div>
                 )}
             </div>
-            <div className="text-center text-xs">
+            <div className="text-center text-xs font-medium text-header-foreground/80">
                 <Link
                 href="https://towerbuddy.tel/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-white text-blue-900 font-semibold py-2 px-4 rounded-md shadow-md hover:bg-gray-200 transition-colors"
+                className="font-semibold text-white hover:underline"
                 >
-                i4sight technologies | All Rights Reserved
+                i4sight Technologies
                 </Link>
+                <span> | All Rights Reserved</span>
             </div>
         </div>
 
