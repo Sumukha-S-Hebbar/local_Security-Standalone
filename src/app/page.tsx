@@ -191,7 +191,7 @@ export default function RootPage() {
                         <path d="M7 12.5c0-.64.13-1.25.36-1.82-.55-.25-1.18-.38-1.86-.38-1.66 0-3 1.34-3 3s1.34 3 3 3c.68 0-1.31-.13-1.86-.38C7.13 13.75 7 13.14 7 12.5zm10 0c0-.64-.13-1.25-.36-1.82.55-.25 1.18-.38 1.86-.38 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.68 0-1.31-.13-1.86-.38.23-.57.36-1.18.36-1.82z" />
                     </svg>
                 </div>
-                <h1 className="text-3xl font-bold">Secure Buddy</h1>
+                <h1 className="text-3xl font-bold">Global Guard</h1>
                 </div>
                  {activeTab === 'signin' ? (
                   <div className="text-center">
@@ -306,7 +306,7 @@ export default function RootPage() {
                   <CardHeader>
                       <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
                       <CardDescription>
-                      Create an account to get started with Secure Buddy.
+                      Create an account to get started with Global Guard.
                       </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">

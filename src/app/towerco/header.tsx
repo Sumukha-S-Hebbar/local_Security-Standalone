@@ -78,7 +78,7 @@ export default function TowercoHeader() {
         <div className="flex items-center gap-6 flex-1">
           <Link href="/towerco/home" className="flex items-center gap-2 text-header-foreground">
             <Shield className="w-8 h-8" />
-            <span className="text-xl font-bold">Secure Buddy</span>
+            <span className="text-xl font-bold">Global Guard</span>
           </Link>
         </div>
 
@@ -104,7 +104,7 @@ export default function TowercoHeader() {
                      <div className="flex items-center gap-2 p-4 border-b border-white/10">
                         <Shield className="w-8 h-8" />
                         <div>
-                            <h1 className="text-xl font-bold">Secure Buddy</h1>
+                            <h1 className="text-xl font-bold">Global Guard</h1>
                             <p className="text-xs">TOWERCO/MNO Portal</p>
                         </div>
                     </div>
