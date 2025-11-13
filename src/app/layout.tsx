@@ -11,8 +11,8 @@ const ibmPlexSans = IBM_Plex_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Global Guard',
-  description: 'Patrolling officer dashboard for Global Guard security management.',
+  title: 'GlobalGuard',
+  description: 'Patrolling officer dashboard for GlobalGuard security management.',
 };
 
 export default function RootLayout({

@@ -80,12 +80,12 @@ export default function AgencyHeader() {
              <div className="relative h-10 w-10">
                 <Image
                   src="/GG logo without text.png"
-                  alt="Global Guard Logo"
+                  alt="GlobalGuard Logo"
                   fill
                   className="object-contain"
                 />
             </div>
-            <span className="text-xl font-bold">Global Guard</span>
+            <span className="text-xl font-bold">GlobalGuard</span>
           </Link>
         </div>
         
@@ -112,13 +112,13 @@ export default function AgencyHeader() {
                         <div className="relative h-10 w-10">
                             <Image
                             src="/GG logo without text.png"
-                            alt="Global Guard Logo"
+                            alt="GlobalGuard Logo"
                             fill
                             className="object-contain"
                             />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold">Global Guard</h1>
+                            <h1 className="text-xl font-bold">GlobalGuard</h1>
                             <p className="text-xs">Agency Portal</p>
                         </div>
                     </div>

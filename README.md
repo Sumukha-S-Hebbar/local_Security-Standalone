@@ -1,6 +1,6 @@
 # Security Module UI
 
-This is a NextJS starter project for GuardLink, a security management application. It includes two user portals: Agency and TOWERCO/MNO.
+This is a NextJS starter project for GlobalGuard, a security management application. It includes two user portals: Agency and TOWERCO/MNO.
 
 ## Tech Stack
 

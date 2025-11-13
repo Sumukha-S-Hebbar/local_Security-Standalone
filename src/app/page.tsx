@@ -188,12 +188,12 @@ export default function RootPage() {
                 <div className="relative h-20 w-20">
                     <Image
                       src="/GG logo without text.png"
-                      alt="Global Guard Logo"
+                      alt="GlobalGuard Logo"
                       fill
                       className="object-contain"
                     />
                 </div>
-                <h1 className="text-3xl font-bold">Global Guard</h1>
+                <h1 className="text-3xl font-bold">GlobalGuard</h1>
                 </div>
                  {activeTab === 'signin' ? (
                   <div className="text-center">
@@ -308,7 +308,7 @@ export default function RootPage() {
                   <CardHeader>
                       <CardTitle className="text-2xl font-bold">Sign Up</CardTitle>
                       <CardDescription>
-                      Create an account to get started with Global Guard.
+                      Create an account to get started with GlobalGuard.
                       </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
