@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -176,20 +177,13 @@ export default function RootPage() {
         <div className="w-full md:w-2/5 bg-header text-header-foreground p-8 flex flex-col justify-between">
             <div className="flex-grow flex flex-col justify-center items-center text-center">
                 <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="bg-white rounded-full p-2">
-                    <svg
-                        className="w-10 h-10 text-header"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                        opacity="0.3"
-                        />
-                        <path d="M12 4.5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm0 2.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm0 10.5c-2.48 0-4.5-2.02-4.5-4.5s2.02-4.5 4.5-4.5 4.5 2.02 4.5 4.5-2.02 4.5-4.5 4.5z" />
-                        <path d="M7 12.5c0-.64.13-1.25.36-1.82-.55-.25-1.18-.38-1.86-.38-1.66 0-3 1.34-3 3s1.34 3 3 3c.68 0-1.31-.13-1.86-.38C7.13 13.75 7 13.14 7 12.5zm10 0c0-.64-.13-1.25-.36-1.82.55-.25 1.18-.38 1.86-.38 1.66 0 3 1.34 3 3s-1.34 3-3 3c-.68 0-1.31-.13-1.86-.38.23-.57.36-1.18.36-1.82z" />
-                    </svg>
+                <div className="relative h-14 w-14">
+                    <Image
+                      src="/GG logo without text.png"
+                      alt="Global Guard Logo"
+                      fill
+                      className="object-contain"
+                    />
                 </div>
                 <h1 className="text-3xl font-bold">Global Guard</h1>
                 </div>
