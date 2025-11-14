@@ -58,6 +58,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { fetchData } from '@/lib/api';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getApiBaseUrl } from '@/lib/get-api-url';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const addSiteFormSchema = z.object({
@@ -557,17 +558,35 @@ export function SitesPageClient() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-            <Button onClick={handleDownloadTemplate} className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-                <FileDown className="mr-2 h-4 w-4" />
-                Download Excel Template
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                      <FileDown className="mr-2 h-4 w-4" />
+                      Download Excel Template
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Upcoming feature</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                <DialogTrigger asChild>
-                    <Button className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Excel
-                    </Button>
-                </DialogTrigger>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                       <DialogTrigger asChild>
+                          <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                              <Upload className="mr-2 h-4 w-4" />
+                              Upload Excel
+                          </Button>
+                      </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Upcoming feature</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <DialogContent>
                     <DialogHeader>
                     <DialogTitle>Upload Site Profiles</DialogTitle>

@@ -48,6 +48,7 @@ import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getApiBaseUrl } from '@/lib/get-api-url';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 type PaginatedGuardsResponse = {
@@ -425,17 +426,35 @@ export default function AgencyGuardsPage() {
               <p className="text-muted-foreground font-medium">Add, view, and manage guard profiles and their assignments.</p>
             </div>
              <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleDownloadTemplate} className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 text-white w-56">
-                    <FileDown className="mr-2 h-4 w-4" />
-                    Download Excel Template
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button disabled variant="outline" className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 text-white w-56">
+                          <FileDown className="mr-2 h-4 w-4" />
+                          Download Excel Template
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Upcoming feature</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-                            <Upload className="mr-2 h-4 w-4" />
-                            Upload Excel
-                        </Button>
-                    </DialogTrigger>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                           <DialogTrigger asChild>
+                                <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    Upload Excel
+                                </Button>
+                            </DialogTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Upcoming feature</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <DialogContent>
                         <DialogHeader>
                         <DialogTitle>Upload Guard Profiles</DialogTitle>

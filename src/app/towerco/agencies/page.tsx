@@ -43,6 +43,7 @@ import {
 import { cn } from '@/lib/utils';
 import { fetchData } from '@/lib/api';
 import { getApiBaseUrl } from '@/lib/get-api-url';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const ITEMS_PER_PAGE = 10;
@@ -425,17 +426,35 @@ export default function TowercoAgenciesPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button onClick={handleDownloadTemplate} className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Download Excel Template
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                              <FileDown className="mr-2 h-4 w-4" />
+                              Download Excel Template
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Upcoming feature</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-                                <Upload className="mr-2 h-4 w-4" />
-                                Upload Excel
-                            </Button>
-                        </DialogTrigger>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <DialogTrigger asChild>
+                                  <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                                      <Upload className="mr-2 h-4 w-4" />
+                                      Upload Excel
+                                  </Button>
+                              </DialogTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Upcoming feature</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         <DialogContent>
                             <DialogHeader>
                             <DialogTitle>Upload Agency Profiles</DialogTitle>

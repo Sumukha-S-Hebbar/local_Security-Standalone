@@ -33,6 +33,7 @@ import { fetchData } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Organization, Incident } from '@/types';
 import { getApiBaseUrl } from '@/lib/get-api-url';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
 const incidentTypes = [
@@ -366,10 +367,19 @@ export default function AgencyIncidentReportPage() {
             <p className="text-muted-foreground">Detailed overview for Incident #{incident.incident_id}.</p>
           </div>
         </div>
-        <Button onClick={handleDownloadReport} className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
-          <FileDown className="mr-2 h-4 w-4" />
-          Download Full Report
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button disabled className="bg-[#00B4D8] hover:bg-[#00B4D8]/90 w-56">
+                <FileDown className="mr-2 h-4 w-4" />
+                Download Full Report
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Upcoming feature</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
