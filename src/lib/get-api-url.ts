@@ -8,16 +8,16 @@
 export const getApiBaseUrl = (): string => {
     if (typeof window === 'undefined') {
         // Return the default from environment variables for server-side rendering or build-time
-        return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api/v2';
+        return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/security/api';
     }
 
     const { protocol, hostname } = window.location;
 
     // Dynamically handle all *.towerbuddy.tel subdomains
     if (hostname.endsWith('.towerbuddy.tel')) {
-        return `${protocol}//${hostname}:8000/api/v2`;
+        return `${protocol}//${hostname}:8000/security/api`;
     }
 
     // For localhost or any other domain, use the value from the .env file, with a fallback.
-    return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/api/v2';
+    return process.env.NEXT_PUBLIC_DJANGO_API_URL || 'http://localhost:8000/security/api';
 };
