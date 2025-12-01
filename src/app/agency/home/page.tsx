@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, ChevronDown, Phone, Loader2, CheckCircle2 } from 'lucide-react';
-import { AgencyAnalyticsDashboard } from './_components/agency-analytics-dashboard';
+import { AgencyResourceStatus } from './_components/agency-resource-status';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -196,9 +196,10 @@ export default function AgencyHomePage() {
         </div>
       </div>
 
-      <AgencyAnalyticsDashboard counts={data.basic_counts} />
-      
-      <IncidentStatusBreakdown counts={data.basic_counts} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <IncidentStatusBreakdown counts={data.basic_counts} />
+        <AgencyResourceStatus counts={data.basic_counts} />
+      </div>
 
       <AgencyIncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
 
