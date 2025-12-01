@@ -182,9 +182,9 @@ export default function AgencyGuardsPage() {
     if (searchQuery) params.append('search', searchQuery);
 
     const checkInStatusMap = {
-      'checked-in': 'Checked In',
-      'checked-out': 'Checked Out',
-      'unassigned': 'Unassigned',
+      'checked-in': 'checked_in',
+      'checked-out': 'checked_out',
+      'unassigned': 'unassigned',
     }
 
     params.append('check_in_status', checkInStatusMap[status]);
