@@ -15,15 +15,15 @@ export function AgencyAnalyticsDashboard({
   
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer" onClick={() => router.push('/agency/incidents?status=active')}>
+        <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer" onClick={() => router.push('/agency/sites?tab=assigned')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Incidents</CardTitle>
-            <ShieldAlert className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
+            <CardTitle className="text-sm font-medium">Assigned Sites</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{counts.active_incidents_count}</div>
+            <div className="text-2xl font-bold">{counts.total_assigned_sites_count}</div>
             <p className="text-xs text-muted-foreground font-medium group-hover:text-accent-foreground">
-              Ongoing emergency incidents
+              Sites with assigned personnel
             </p>
           </CardContent>
         </Card>
@@ -51,15 +51,15 @@ export function AgencyAnalyticsDashboard({
             </p>
             </CardContent>
         </Card>
-        <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer" onClick={() => router.push('/agency/sites')}>
+        <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer" onClick={() => router.push('/agency/sites?tab=unassigned')}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sites</CardTitle>
+            <CardTitle className="text-sm font-medium">Unassigned Sites</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
             </CardHeader>
             <CardContent>
-            <div className="text-2xl font-bold">{counts.total_sites_count}</div>
+            <div className="text-2xl font-bold">{counts.total_unassigned_sites_count}</div>
             <p className="text-xs text-muted-foreground font-medium group-hover:text-accent-foreground">
-                Locations under contract
+                Sites needing assignments
             </p>
             </CardContent>
         </Card>

@@ -41,14 +41,15 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Type definitions based on the new API response
 export type BasicCounts = {
-    active_incidents_count: number;
     under_review_incidents_count: number;
     resolved_incidents_count: number;
-    total_sites_count: number;
     total_guards_count: number;
     total_patrol_officers_count: number;
     total_incidents_count?: number;
     sos_count?: number;
+    total_assigned_sites_count: number;
+    total_unassigned_sites_count: number;
+    active_incidents_count: number;
 };
 
 export type ActiveIncident = {

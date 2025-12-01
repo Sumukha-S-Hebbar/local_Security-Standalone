@@ -70,6 +70,8 @@ type ApiCity = {
 export function SitesPageClient() {
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'assigned';
 
   const [assignedSites, setAssignedSites] = useState<Site[]>([]);
   const [unassignedSites, setUnassignedSites] = useState<Site[]>([]);
@@ -80,7 +82,7 @@ export function SitesPageClient() {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState('assigned');
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   // State for Assigned Sites filters
   const [assignedSearchQuery, setAssignedSearchQuery] = useState('');
