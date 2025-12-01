@@ -187,8 +187,8 @@ export function SitesPageClient() {
         })) || [];
         setPatrollingOfficers(formattedPOs);
 
-        const unassignedGuardsResponse = await fetchData<{ results: any[] }>(`/agency/${loggedInOrg.code}/unassigned_guards/list/`, token);
-        setUnassignedGuards(unassignedGuardsResponse?.results || []);
+        const unassignedGuardsResponse = await fetchData<any[]>(`/agency/${loggedInOrg.code}/unassigned_guards/list/`, token);
+        setUnassignedGuards(unassignedGuardsResponse || []);
 
     } catch (error) {
         toast({
