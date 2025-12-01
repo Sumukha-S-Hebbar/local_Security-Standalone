@@ -36,6 +36,8 @@ import Link from 'next/link';
 import { fetchData } from '@/lib/api';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { IncidentStatusBreakdown } from './_components/incident-status-breakdown';
+import { TowercoResourceStatus } from './_components/towerco-resource-status';
 
 
 export type BasicCounts = {
@@ -44,6 +46,9 @@ export type BasicCounts = {
   total_sites_count: number;
   total_agencies_count: number;
   total_patrol_officers_count: number;
+  sos_count?: number;
+  under_review_incidents_count: number;
+  resolved_incidents_count: number;
 };
 
 export type IncidentListItem = {
@@ -223,9 +228,10 @@ function TowercoHomePageContent() {
         </div>
       </div>
       
-      <TowercoAnalyticsDashboard
-        counts={data.basic_counts}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <IncidentStatusBreakdown counts={data.basic_counts} />
+        <TowercoResourceStatus counts={data.basic_counts} />
+      </div>
       
       <SiteStatusBreakdown siteStatusData={data.site_status} />
       <AgencyPerformance performanceData={data.agency_performance} />
@@ -376,5 +382,3 @@ export default function TowercoHomePage() {
         </Suspense>
     )
 }
-
-    
