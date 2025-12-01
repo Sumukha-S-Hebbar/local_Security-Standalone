@@ -97,7 +97,7 @@ export function AgencyPerformance({ performanceData }: { performanceData: Agency
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <CardTitle>Agency Performance Breakdown</CardTitle>
+              <CardTitle>Agencies Performance</CardTitle>
               <CardDescription>
                 Comparison of key performance indicators across all agencies.
               </CardDescription>
