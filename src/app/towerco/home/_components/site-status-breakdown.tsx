@@ -139,7 +139,7 @@ export function SiteStatusBreakdown({ siteStatusData }: { siteStatusData: SiteSt
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Site Status Overview</CardTitle>
+        <CardTitle>Site Status</CardTitle>
         <CardDescription className="font-medium">A real-time overview of site assignments. Click a slice to see details.</CardDescription>
       </CardHeader>
       <CardContent>
