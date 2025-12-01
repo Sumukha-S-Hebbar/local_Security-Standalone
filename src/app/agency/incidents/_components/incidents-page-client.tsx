@@ -53,6 +53,7 @@ type IncidentCounts = {
     active_incidents_count: number;
     under_review_incidents_count: number;
     resolved_incidents_count: number;
+    sos_count?: number;
 }
 
 type PaginatedIncidentsResponse = {
@@ -71,7 +72,7 @@ export function IncidentsPageClient() {
   
   const [incidents, setIncidents] = useState<IncidentListItem[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
-  const [incidentCounts, setIncidentCounts] = useState<IncidentCounts>({ active_incidents_count: 0, under_review_incidents_count: 0, resolved_incidents_count: 0 });
+  const [incidentCounts, setIncidentCounts] = useState<IncidentCounts>({ active_incidents_count: 0, under_review_incidents_count: 0, resolved_incidents_count: 0, sos_count: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -130,13 +131,17 @@ export function IncidentsPageClient() {
       });
       
       if (selectedStatus !== 'all') {
-        let apiStatus = '';
-        if (selectedStatus === 'under-review') {
-          apiStatus = 'Under Review';
+        if (selectedStatus === 'sos') {
+            params.append('incident_type', 'SOS');
         } else {
-          apiStatus = selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1);
+            let apiStatus = '';
+            if (selectedStatus === 'under-review') {
+            apiStatus = 'Under Review';
+            } else {
+            apiStatus = selectedStatus.charAt(0).toUpperCase() + selectedStatus.slice(1);
+            }
+            params.append('incident_status', apiStatus);
         }
-        params.append('incident_status', apiStatus);
       }
       
       if (searchQuery) params.append('search', searchQuery);
@@ -265,6 +270,7 @@ export function IncidentsPageClient() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all" className="font-medium">All Statuses</SelectItem>
+                <SelectItem value="sos" className="font-medium">SOS</SelectItem>
                 <SelectItem value="active" className="font-medium">Active</SelectItem>
                 <SelectItem value="under-review" className="font-medium">Under Review</SelectItem>
                 <SelectItem value="resolved" className="font-medium">Resolved</SelectItem>
