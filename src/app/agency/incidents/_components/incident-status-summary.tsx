@@ -30,9 +30,8 @@ export function IncidentStatusSummary({
       status: 'sos',
       count: counts.sos_count ?? 0,
       label: 'SOS',
-      icon: AlertTriangle,
-      color: 'text-red-800',
-      bg: 'bg-red-100',
+      icon: ShieldAlert,
+      bg: 'bg-[#FF0000]',
       ring: 'ring-red-500'
     },
     {
@@ -40,8 +39,7 @@ export function IncidentStatusSummary({
       count: counts.active_incidents_count,
       label: 'Active',
       icon: ShieldAlert,
-      color: 'text-orange-800',
-      bg: 'bg-orange-100',
+      bg: 'bg-[#F97316]',
       ring: 'ring-orange-500'
     },
     {
@@ -49,8 +47,7 @@ export function IncidentStatusSummary({
       count: counts.under_review_incidents_count,
       label: 'Under Review',
       icon: ShieldQuestion,
-      color: 'text-yellow-800',
-      bg: 'bg-yellow-100',
+      bg: 'bg-[#FBBF24]',
       ring: 'ring-yellow-500'
     },
     {
@@ -58,8 +55,7 @@ export function IncidentStatusSummary({
       count: counts.resolved_incidents_count,
       label: 'Resolved',
       icon: CheckCircle2,
-      color: 'text-green-800',
-      bg: 'bg-green-100',
+      bg: 'bg-[#22C55E]',
       ring: 'ring-green-500'
     }
   ] as const;
@@ -71,7 +67,7 @@ export function IncidentStatusSummary({
             <div 
             key={item.status}
             className={cn(
-                'flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-all',
+                'flex items-center gap-4 p-4 rounded-lg cursor-pointer transition-all text-white',
                 item.bg,
                 selectedStatus === item.status ? `ring-2 ${item.ring} shadow-md` : 'hover:shadow-lg'
             )}
@@ -79,10 +75,10 @@ export function IncidentStatusSummary({
             role="button"
             tabIndex={0}
             >
-                <item.icon className={cn('h-8 w-8', item.color)} />
+                <item.icon className='h-8 w-8' />
                 <div>
-                    <p className={cn('text-sm font-semibold', item.color)}>{item.label}</p>
-                    <p className={cn('text-2xl font-bold', item.color)}>{item.count}</p>
+                    <p className='text-sm font-semibold'>{item.label}</p>
+                    <p className='text-2xl font-bold'>{item.count}</p>
                 </div>
             </div>
         ))}
