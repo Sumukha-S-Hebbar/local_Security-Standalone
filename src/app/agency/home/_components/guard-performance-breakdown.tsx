@@ -40,7 +40,7 @@ export function GuardPerformanceBreakdown({ performance }: { performance: GuardP
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Guard Performance Overview</CardTitle>
+        <CardTitle>Guards Performance</CardTitle>
         <CardDescription>
         Average performance metrics across all assigned guards.
         </CardDescription>

@@ -33,7 +33,7 @@ export function PatrollingOfficerPerformance({
   return (
     <Card>
       <CardHeader>
-          <CardTitle>Patrolling Officer Performance</CardTitle>
+          <CardTitle>Patrolling Officers Performance</CardTitle>
           <CardDescription>
             Average performance metrics across all patrolling officers.
           </CardDescription>

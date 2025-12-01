@@ -63,7 +63,7 @@ export function IncidentStatusBreakdown({
   return (
     <Card>
       <CardHeader>
-            <CardTitle>Incident Status Breakdown</CardTitle>
+            <CardTitle>Incident Status</CardTitle>
             <CardDescription className="font-medium">
             Click a status to see the list of incidents.
             </CardDescription>
@@ -85,7 +85,7 @@ export function IncidentStatusBreakdown({
             >
               <item.icon className="h-8 w-8" />
               <div>
-                <p className="font-semibold capitalize">{item.status.replace('-', ' ')}</p>
+                <p className="font-semibold capitalize">{item.label}</p>
                 <p className="text-2xl font-bold">{item.count}</p>
               </div>
             </div>
