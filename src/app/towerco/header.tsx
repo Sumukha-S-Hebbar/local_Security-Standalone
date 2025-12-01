@@ -54,16 +54,7 @@ export default function TowercoHeader() {
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
-       const loggedOutState = {
-        isLoggedIn: false,
-        user: null,
-        role: null,
-        token: null,
-        hasUserProfile: null,
-        orgCode: null,
-        globalConsent: null,
-      };
-      localStorage.setItem('userData', JSON.stringify(loggedOutState));
+       localStorage.removeItem('userData');
     }
     router.push('/');
   };

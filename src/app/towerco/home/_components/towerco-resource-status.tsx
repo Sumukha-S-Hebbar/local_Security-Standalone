@@ -17,6 +17,7 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
       icon: Building2,
       color: 'bg-[#1B2A41] text-white',
       action: () => router.push('/towerco/sites'),
+      isClickable: true,
     },
     {
       label: 'Security Agencies',
@@ -24,6 +25,7 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
       icon: Briefcase,
       color: 'bg-[#00B4D8] text-white',
       action: () => router.push('/towerco/agencies'),
+      isClickable: true,
     },
     {
       label: 'Patrolling Officers',
@@ -31,6 +33,7 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
       icon: UserCheck,
       color: 'bg-[#00B4D8] text-white',
       action: () => {}, // No link for now
+      isClickable: false,
     },
     {
       label: 'Guards',
@@ -38,6 +41,7 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
       icon: Users,
       color: 'bg-[#1B2A41] text-white',
       action: () => {}, // No link for now
+      isClickable: false,
     },
   ];
 
@@ -46,7 +50,7 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
       <CardHeader>
         <CardTitle>Resource Status</CardTitle>
         <CardDescription className="font-medium">
-          Click a resource to see the list.
+          A high-level overview of all operational resources.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -54,12 +58,15 @@ export function TowercoResourceStatus({ counts }: { counts: BasicCounts }) {
           {resourceCards.map((item) => (
             <div
               key={item.label}
-              onClick={item.action}
-              role="button"
-              tabIndex={0}
+              onClick={item.isClickable ? item.action : undefined}
+              role={item.isClickable ? 'button' : 'presentation'}
+              tabIndex={item.isClickable ? 0 : -1}
               className={cn(
-                'flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all hover:shadow-md',
-                item.color
+                'flex items-center gap-4 rounded-lg p-4 transition-all',
+                item.color,
+                item.isClickable
+                  ? 'cursor-pointer hover:shadow-md'
+                  : 'cursor-not-allowed opacity-90'
               )}
             >
               <item.icon className="h-8 w-8" />
