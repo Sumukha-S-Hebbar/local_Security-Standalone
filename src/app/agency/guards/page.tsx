@@ -135,233 +135,9 @@ export default function AgencyGuardsPage() {
 
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
-  const [isRequestingSelfie, setIsRequestingSelfie] = useState(false);
-  
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('checked-in');
-
-  const [checkedInCount, setCheckedInCount] = useState(0);
-  const [checkedOutCount, setCheckedOutCount] = useState(0);
-  const [unassignedCount, setUnassignedCount] = useState(0);
-  const [checkedInCurrentPage, setCheckedInCurrentPage] = useState(1);
-  const [checkedOutCurrentPage, setCheckedOutCurrentPage] = useState(1);
-  const [unassignedCurrentPage, setUnassignedCurrentPage] = useState(1);
-
-  const [apiRegions, setApiRegions] = useState<ApiRegion[]>([]);
-  const [apiCities, setApiCities] = useState<ApiCity[]>([]);
-  const [isCitiesLoading, setIsCitiesLoading] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-        const userDataString = localStorage.getItem('userData');
-        if (userDataString) {
-            const userData = JSON.parse(userDataString);
-            setLoggedInOrg(userData.user.organization);
-            setCountryId(userData.user.country?.id);
-            setToken(userData.token);
-        }
-    }
-  }, []);
-
-  const fetchGuards = useCallback(async (status: 'checked-in' | 'checked-out' | 'unassigned', page: number) => {
-    if (!loggedInOrg || !token) return;
-    setIsLoading(true);
-    
-    const orgCode = loggedInOrg.code;
-
-    let checkInStatus: string;
-    switch(status) {
-        case 'checked-in':
-            checkInStatus = 'checked_in';
-            break;
-        case 'checked-out':
-            checkInStatus = 'checked_out';
-            break;
-        case 'unassigned':
-            checkInStatus = 'unassigned';
-            break;
-    }
-    
-    const params = new URLSearchParams({
-        page: page.toString(),
-        page_size: ITEMS_PER_PAGE.toString(),
-    });
-    if (searchQuery) params.append('search', searchQuery);
-
-    const url = `/agency/${orgCode}/guards/list/?check_in_status=${checkInStatus}&${params.toString()}`;
-
-    try {
-        const response = await fetchData<PaginatedGuardsResponse>(url, token);
-        if (status === 'checked-in') {
-            setCheckedInGuards(response?.results || []);
-            setCheckedInCount(response?.count || 0);
-        } else if (status === 'checked-out') {
-            setCheckedOutGuards(response?.results || []);
-            setCheckedOutCount(response?.count || 0);
-        } else {
-            setUnassignedGuards(response?.results || []);
-            setUnassignedCount(response?.count || 0);
-        }
-    } catch (error) {
-        toast({ variant: 'destructive', title: 'Error', description: `Failed to load ${status} guards.` });
-    } finally {
-        setIsLoading(false);
-    }
-}, [loggedInOrg, toast, searchQuery, token]);
-
-
-  useEffect(() => {
-    if (loggedInOrg && token) {
-      if (activeTab === 'checked-in') {
-        fetchGuards('checked-in', checkedInCurrentPage);
-      } else if (activeTab === 'checked-out') {
-        fetchGuards('checked-out', checkedOutCurrentPage);
-      } else if (activeTab === 'unassigned') {
-        fetchGuards('unassigned', unassignedCurrentPage);
-      }
-    }
-  }, [loggedInOrg, token, fetchGuards, activeTab, checkedInCurrentPage, checkedOutCurrentPage, unassignedCurrentPage]);
-  
-  useEffect(() => {
-      setCheckedInCurrentPage(1);
-      setCheckedOutCurrentPage(1);
-      setUnassignedCurrentPage(1);
-      if (loggedInOrg) {
-        if (activeTab === 'checked-in') {
-            fetchGuards('checked-in', 1);
-        } else if (activeTab === 'checked-out') {
-            fetchGuards('checked-out', 1);
-        } else if (activeTab === 'unassigned') {
-            fetchGuards('unassigned', 1);
-        }
-      }
-  }, [searchQuery, loggedInOrg, fetchGuards, activeTab]);
-
-    const handlePagination = (direction: 'next' | 'prev') => {
-        if (activeTab === 'checked-in') {
-            setCheckedInCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
-        } else if (activeTab === 'checked-out') {
-            setCheckedOutCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
-        } else if (activeTab === 'unassigned') {
-            setUnassignedCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
-        }
-    };
-    
-    const totalCheckedInPages = Math.ceil(checkedInCount / ITEMS_PER_PAGE);
-    const totalCheckedOutPages = Math.ceil(checkedOutCount / ITEMS_PER_PAGE);
-    const totalUnassignedPages = Math.ceil(unassignedCount / ITEMS_PER_PAGE);
-
-  const uploadForm = useForm<z.infer<typeof uploadFormSchema>>({
-    resolver: zodResolver(uploadFormSchema),
-  });
-  
-  const addGuardForm = useForm<z.infer<typeof addGuardFormSchema>>({
-    resolver: zodResolver(addGuardFormSchema),
-    defaultValues: { first_name: '', last_name: '', email: '', employee_id: '', phone: '', region: '', city: '' },
-  });
-
-  const watchedRegion = addGuardForm.watch('region');
-
-  const handleAddGuardClick = async () => {
-      if (!countryId || !token) {
-          toast({ variant: "destructive", title: "Error", description: "User country not found. Cannot fetch regions." });
-          return;
-      }
-      
-      const url = `/regions/?country=${countryId}`;
-      try {
-        const data = await fetchData<{ regions: ApiRegion[] }>(url, token);
-        setApiRegions(data?.regions || []);
-        setIsAddDialogOpen(true);
-      } catch (error) {
-        console.error("Failed to fetch regions:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not load regions for the selection.",
-        });
-      }
-  };
-
-  useEffect(() => {
-      async function fetchCities() {
-          if (!watchedRegion || !countryId || !token) {
-              setApiCities([]);
-              return;
-          }
-          
-          setIsCitiesLoading(true);
-          const url = `/cities/?country=${countryId}&region=${watchedRegion}`;
-
-          try {
-              const data = await fetchData<{ cities: ApiCity[] }>(url, token);
-              setApiCities(data?.cities || []);
-          } catch (error) {
-              console.error("Failed to fetch cities:", error);
-              toast({
-                  variant: "destructive",
-                  title: "Error",
-                  description: "Could not load cities for the selected region.",
-              });
-              setApiCities([]);
-          } finally {
-              setIsCitiesLoading(false);
-          }
-      }
-
-      if (watchedRegion) {
-        addGuardForm.setValue('city', '');
-        fetchCities();
-      }
-  }, [watchedRegion, countryId, toast, addGuardForm, token]);
-
-
-  async function onUploadSubmit(values: z.infer<typeof uploadFormSchema>) {
-    setIsUploading(true);
-    console.log('Uploaded file:', values.excelFile[0]);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    toast({
-      title: 'Upload Successful',
-      description: `File "${values.excelFile[0].name}" has been uploaded. Guard profiles would be processed.`,
-    });
-    uploadForm.reset({ excelFile: undefined });
-    const fileInput = document.getElementById('excelFile-guard-input') as HTMLInputElement | null;
-    if (fileInput) fileInput.value = '';
-    setIsUploading(false);
-    setIsUploadDialogOpen(false);
-  }
-
-  async function onAddGuardSubmit(values: z.infer<typeof addGuardFormSchema>) {
-    setIsAdding(true);
-    
-    if (!loggedInOrg || !token) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Organization information not found.'});
-        setIsAdding(false);
-        return;
-    }
-
-    const API_URL = `${getApiBaseUrl()}/agency/${loggedInOrg.code}/guards/add/`;
-
-    const payload = {
-        ...values,
-        region: parseInt(values.region, 10),
-        city: parseInt(values.city, 10),
-    };
-
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`
-            },
-            body: JSON.stringify(payload)
+  const [isUploading, setIsUploading] = useState(isUploading;
         });
 
-        const responseData = await response.json();
-        
         if (!response.ok) {
             const errorDetail = typeof responseData.detail === 'object' ? JSON.stringify(responseData.detail) : responseData.detail;
             throw new Error(errorDetail || 'Failed to add guard.');
@@ -909,13 +685,10 @@ export default function AgencyGuardsPage() {
                           return (
                             <TableRow 
                               key={guard.id}
-                              onClick={() => router.push(`/agency/guards/${guard.id}`)}
-                              className="cursor-pointer hover:bg-accent hover:text-accent-foreground group"
+                              className="hover:bg-accent hover:text-accent-foreground group"
                             >
                               <TableCell>
-                                <Button asChild variant="link" className="p-0 h-auto font-medium group-hover:text-accent-foreground" onClick={(e) => e.stopPropagation()}>
-                                  <Link href={`/agency/guards/${guard.id}`}>{guard.employee_id}</Link>
-                                </Button>
+                                <span className="font-medium">{guard.employee_id}</span>
                               </TableCell>
                               <TableCell>
                                   <p className="font-medium">{guardName}</p>
@@ -1021,3 +794,5 @@ export default function AgencyGuardsPage() {
     </>
   );
 }
+
+    
