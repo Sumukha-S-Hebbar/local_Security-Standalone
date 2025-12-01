@@ -940,7 +940,7 @@ export default function AgencyGuardsPage() {
                                   <span className="font-medium text-muted-foreground">Unassigned</span>
                               </TableCell>
                               <TableCell>
-                                  <span className="text-muted-foreground group-hover:text-accent-foreground font-medium">Unassigned</span>
+                                  <span className="font-medium text-muted-foreground">Unassigned</span>
                               </TableCell>
                               <TableCell>
                                 <div className="flex items-center gap-2">
