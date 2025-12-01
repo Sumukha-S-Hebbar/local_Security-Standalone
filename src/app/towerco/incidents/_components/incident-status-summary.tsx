@@ -29,9 +29,9 @@ export function IncidentStatusSummary({
       count: counts.sos_count ?? 0,
       label: 'SOS',
       icon: AlertTriangle,
-      color: 'text-destructive',
-      bg: 'bg-destructive/10',
-      ring: 'ring-destructive'
+      color: 'text-red-600',
+      bg: 'bg-red-600/10',
+      ring: 'ring-red-600'
     },
     {
       status: 'active',
