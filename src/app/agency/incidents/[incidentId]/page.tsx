@@ -37,7 +37,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 
 const incidentTypes = [
-    'SOS',
     'Theft',
     'Vandalism',
     'Tresspassing',
@@ -647,4 +646,3 @@ export default function AgencyIncidentReportPage() {
     </>
   );
 }
-
