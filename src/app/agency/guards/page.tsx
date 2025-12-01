@@ -125,6 +125,7 @@ export default function AgencyGuardsPage() {
   
   const [checkedInGuards, setCheckedInGuards] = useState<Guard[]>([]);
   const [checkedOutGuards, setCheckedOutGuards] = useState<Guard[]>([]);
+  const [unassignedGuards, setUnassignedGuards] = useState<Guard[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
   const [patrollingOfficers, setPatrollingOfficers] = useState<PatrollingOfficer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,8 +144,10 @@ export default function AgencyGuardsPage() {
 
   const [checkedInCount, setCheckedInCount] = useState(0);
   const [checkedOutCount, setCheckedOutCount] = useState(0);
+  const [unassignedCount, setUnassignedCount] = useState(0);
   const [checkedInCurrentPage, setCheckedInCurrentPage] = useState(1);
   const [checkedOutCurrentPage, setCheckedOutCurrentPage] = useState(1);
+  const [unassignedCurrentPage, setUnassignedCurrentPage] = useState(1);
 
   const [apiRegions, setApiRegions] = useState<ApiRegion[]>([]);
   const [apiCities, setApiCities] = useState<ApiCity[]>([]);
@@ -162,13 +165,24 @@ export default function AgencyGuardsPage() {
     }
   }, []);
 
-  const fetchGuards = useCallback(async (status: 'checked-in' | 'checked-out', page: number) => {
+  const fetchGuards = useCallback(async (status: 'checked-in' | 'checked-out' | 'unassigned', page: number) => {
     if (!loggedInOrg || !token) return;
     setIsLoading(true);
     
     const orgCode = loggedInOrg.code;
 
-    const checkInStatus = status === 'checked-in' ? 'checked_in' : 'checked_out';
+    let checkInStatus: string;
+    switch(status) {
+        case 'checked-in':
+            checkInStatus = 'checked_in';
+            break;
+        case 'checked-out':
+            checkInStatus = 'checked_out';
+            break;
+        case 'unassigned':
+            checkInStatus = 'unassigned';
+            break;
+    }
     
     const params = new URLSearchParams({
         page: page.toString(),
@@ -183,12 +197,15 @@ export default function AgencyGuardsPage() {
         if (status === 'checked-in') {
             setCheckedInGuards(response?.results || []);
             setCheckedInCount(response?.count || 0);
-        } else {
+        } else if (status === 'checked-out') {
             setCheckedOutGuards(response?.results || []);
             setCheckedOutCount(response?.count || 0);
+        } else {
+            setUnassignedGuards(response?.results || []);
+            setUnassignedCount(response?.count || 0);
         }
     } catch (error) {
-        toast({ variant: 'destructive', title: 'Error', description: `Failed to load ${status === 'checked-in' ? 'checked in' : 'checked out'} guards.` });
+        toast({ variant: 'destructive', title: 'Error', description: `Failed to load ${status} guards.` });
     } finally {
         setIsLoading(false);
     }
@@ -199,20 +216,25 @@ export default function AgencyGuardsPage() {
     if (loggedInOrg && token) {
       if (activeTab === 'checked-in') {
         fetchGuards('checked-in', checkedInCurrentPage);
-      } else {
+      } else if (activeTab === 'checked-out') {
         fetchGuards('checked-out', checkedOutCurrentPage);
+      } else if (activeTab === 'unassigned') {
+        fetchGuards('unassigned', unassignedCurrentPage);
       }
     }
-  }, [loggedInOrg, token, fetchGuards, activeTab, checkedInCurrentPage, checkedOutCurrentPage]);
+  }, [loggedInOrg, token, fetchGuards, activeTab, checkedInCurrentPage, checkedOutCurrentPage, unassignedCurrentPage]);
   
   useEffect(() => {
       setCheckedInCurrentPage(1);
       setCheckedOutCurrentPage(1);
+      setUnassignedCurrentPage(1);
       if (loggedInOrg) {
         if (activeTab === 'checked-in') {
             fetchGuards('checked-in', 1);
-        } else {
+        } else if (activeTab === 'checked-out') {
             fetchGuards('checked-out', 1);
+        } else if (activeTab === 'unassigned') {
+            fetchGuards('unassigned', 1);
         }
       }
   }, [searchQuery, loggedInOrg, fetchGuards, activeTab]);
@@ -220,13 +242,16 @@ export default function AgencyGuardsPage() {
     const handlePagination = (direction: 'next' | 'prev') => {
         if (activeTab === 'checked-in') {
             setCheckedInCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
-        } else {
+        } else if (activeTab === 'checked-out') {
             setCheckedOutCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
+        } else if (activeTab === 'unassigned') {
+            setUnassignedCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
         }
     };
     
     const totalCheckedInPages = Math.ceil(checkedInCount / ITEMS_PER_PAGE);
     const totalCheckedOutPages = Math.ceil(checkedOutCount / ITEMS_PER_PAGE);
+    const totalUnassignedPages = Math.ceil(unassignedCount / ITEMS_PER_PAGE);
 
   const uploadForm = useForm<z.infer<typeof uploadFormSchema>>({
     resolver: zodResolver(uploadFormSchema),
@@ -350,7 +375,7 @@ export default function AgencyGuardsPage() {
         addGuardForm.reset();
         setIsAdding(false);
         setIsAddDialogOpen(false);
-        await fetchGuards(activeTab as 'checked-in' | 'checked-out', 1);
+        await fetchGuards(activeTab as 'checked-in' | 'checked-out' | 'unassigned', 1);
 
     } catch(error: any) {
          toast({
@@ -697,9 +722,10 @@ export default function AgencyGuardsPage() {
                 </div>
             ) : (
              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="checked-in">Checked In</TabsTrigger>
                     <TabsTrigger value="checked-out">Checked Out</TabsTrigger>
+                    <TabsTrigger value="unassigned">Unassigned</TabsTrigger>
                 </TabsList>
                 <TabsContent value="checked-in" className="mt-4">
                   <Table>
@@ -863,33 +889,125 @@ export default function AgencyGuardsPage() {
                     </TableBody>
                   </Table>
                 </TabsContent>
+                <TabsContent value="unassigned" className="mt-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Guard ID</TableHead>
+                        <TableHead>Guard Name</TableHead>
+                        <TableHead>Contact Info</TableHead>
+                        <TableHead>Site Name</TableHead>
+                        <TableHead>Patrolling Officer</TableHead>
+                        <TableHead>Incidents</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {unassignedGuards.length > 0 ? (
+                        unassignedGuards.map((guard) => {
+                          const guardName = `${guard.first_name} ${guard.last_name || ''}`.trim();
+                          
+                          return (
+                            <TableRow 
+                              key={guard.id}
+                              onClick={() => router.push(`/agency/guards/${guard.id}`)}
+                              className="cursor-pointer hover:bg-accent hover:text-accent-foreground group"
+                            >
+                              <TableCell>
+                                <Button asChild variant="link" className="p-0 h-auto font-medium group-hover:text-accent-foreground" onClick={(e) => e.stopPropagation()}>
+                                  <Link href={`/agency/guards/${guard.id}`}>{guard.employee_id}</Link>
+                                </Button>
+                              </TableCell>
+                              <TableCell>
+                                  <p className="font-medium">{guardName}</p>
+                              </TableCell>
+                              <TableCell>
+                                 <div className="space-y-1">
+                                      {guard.email && (
+                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                              <Mail className="h-4 w-4 flex-shrink-0" />
+                                              <a href={`mailto:${guard.email}`} className="hover:underline font-medium group-hover:text-accent-foreground" onClick={(e) => e.stopPropagation()}>{guard.email}</a>
+                                          </div>
+                                      )}
+                                      {guard.phone && (
+                                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                              <Phone className="h-4 w-4 flex-shrink-0" />
+                                              <a href={`tel:${guard.phone}`} className="hover:underline font-medium group-hover:text-accent-foreground" onClick={(e) => e.stopPropagation()}>{guard.phone}</a>
+                                          </div>
+                                      )}
+                                  </div>
+                              </TableCell>
+                              <TableCell>
+                                  <span className="font-medium text-muted-foreground">Unassigned</span>
+                              </TableCell>
+                              <TableCell>
+                                  <span className="text-muted-foreground group-hover:text-accent-foreground font-medium">Unassigned</span>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <ShieldAlert className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
+                                  <span className="font-medium">{guard.incident_count}</span>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center text-muted-foreground py-10 font-medium">
+                            No unassigned guards found.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TabsContent>
             </Tabs>
             )}
           </CardContent>
-          {(activeTab === 'checked-in' && checkedInCount > 0) || (activeTab === 'checked-out' && checkedOutCount > 0) ? (
+          {(activeTab === 'checked-in' && checkedInCount > 0) || 
+           (activeTab === 'checked-out' && checkedOutCount > 0) ||
+           (activeTab === 'unassigned' && unassignedCount > 0) ? (
             <CardFooter>
                 <div className="flex items-center justify-between w-full">
                     <div className="text-sm text-muted-foreground font-medium">
-                        Showing {activeTab === 'checked-in' ? checkedInGuards.length : checkedOutGuards.length} of {activeTab === 'checked-in' ? checkedInCount : checkedOutCount} guards.
+                        {activeTab === 'checked-in' && `Showing ${checkedInGuards.length} of ${checkedInCount} guards.`}
+                        {activeTab === 'checked-out' && `Showing ${checkedOutGuards.length} of ${checkedOutCount} guards.`}
+                        {activeTab === 'unassigned' && `Showing ${unassignedGuards.length} of ${unassignedCount} guards.`}
                     </div>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handlePagination('prev')}
-                            disabled={isLoading || (activeTab === 'checked-in' ? checkedInCurrentPage === 1 : checkedOutCurrentPage === 1)}
+                            disabled={isLoading || 
+                                (activeTab === 'checked-in' && checkedInCurrentPage === 1) ||
+                                (activeTab === 'checked-out' && checkedOutCurrentPage === 1) ||
+                                (activeTab === 'unassigned' && unassignedCurrentPage === 1)
+                            }
                             className="w-20"
                         >
                             Previous
                         </Button>
                         <span className="text-sm font-medium">
-                            Page {activeTab === 'checked-in' ? checkedInCurrentPage : checkedOutCurrentPage} of {activeTab === 'checked-in' ? totalCheckedInPages : totalCheckedOutPages}
+                            Page {
+                                activeTab === 'checked-in' ? checkedInCurrentPage :
+                                activeTab === 'checked-out' ? checkedOutCurrentPage :
+                                unassignedCurrentPage
+                            } of {
+                                activeTab === 'checked-in' ? totalCheckedInPages :
+                                activeTab === 'checked-out' ? totalCheckedOutPages :
+                                totalUnassignedPages
+                            }
                         </span>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handlePagination('next')}
-                            disabled={isLoading || (activeTab === 'checked-in' ? checkedInCurrentPage >= totalCheckedInPages : checkedOutCurrentPage >= totalCheckedOutPages)}
+                            disabled={isLoading || 
+                                (activeTab === 'checked-in' && checkedInCurrentPage >= totalCheckedInPages) ||
+                                (activeTab === 'checked-out' && checkedOutCurrentPage >= totalCheckedOutPages) ||
+                                (activeTab === 'unassigned' && unassignedCurrentPage >= totalUnassignedPages)
+                            }
                             className="w-20"
                         >
                             Next
