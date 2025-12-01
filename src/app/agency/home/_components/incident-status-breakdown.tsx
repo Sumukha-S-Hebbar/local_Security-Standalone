@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, ShieldAlert, ShieldQuestion } from 'lucide-react';
+import { CheckCircle2, ShieldAlert, ShieldQuestion, AlertTriangle } from 'lucide-react';
 import type { BasicCounts } from '../page';
 
 
@@ -23,25 +23,36 @@ export function IncidentStatusBreakdown({
 
   const statusCards = [
     {
+      status: 'sos',
+      count: counts.sos_count ?? 0,
+      label: 'SOS',
+      icon: AlertTriangle,
+      bg: 'bg-[#FF0000]',
+      ring: 'ring-red-500',
+    },
+    {
       status: 'active',
       count: counts.active_incidents_count,
+      label: 'Active',
       icon: ShieldAlert,
-      className: 'bg-destructive/10 text-destructive',
-      ring: 'ring-destructive',
+      bg: 'bg-[#F97316]',
+      ring: 'ring-orange-500',
     },
     {
       status: 'under-review',
       count: counts.under_review_incidents_count,
+      label: 'Under Review',
       icon: ShieldQuestion,
-      className: 'bg-[#FFC107]/10 text-[#FFC107]',
-      ring: 'ring-[#FFC107]',
+      bg: 'bg-[#FBBF24]',
+      ring: 'ring-yellow-500',
     },
     {
       status: 'resolved',
       count: counts.resolved_incidents_count,
+      label: 'Resolved',
       icon: CheckCircle2,
-      className: 'bg-chart-2/10 text-chart-2',
-      ring: 'ring-chart-2',
+      bg: 'bg-[#22C55E]',
+      ring: 'ring-green-500',
     },
   ] as const;
 
@@ -58,7 +69,7 @@ export function IncidentStatusBreakdown({
             </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {statusCards.map((item) => (
             <div
               key={item.status}
@@ -66,13 +77,15 @@ export function IncidentStatusBreakdown({
               role="button"
               tabIndex={0}
               className={cn(
-                'flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all hover:shadow-md',
-                item.className
+                'flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all hover:shadow-md text-white',
+                item.bg,
+                'hover:ring-2',
+                item.ring
               )}
             >
               <item.icon className="h-8 w-8" />
               <div>
-                <p className="font-medium capitalize">{item.status.replace('-', ' ')}</p>
+                <p className="font-semibold capitalize">{item.status.replace('-', ' ')}</p>
                 <p className="text-2xl font-bold">{item.count}</p>
               </div>
             </div>

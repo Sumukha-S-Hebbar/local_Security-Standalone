@@ -48,6 +48,7 @@ export type BasicCounts = {
     total_guards_count: number;
     total_patrol_officers_count: number;
     total_incidents_count?: number;
+    sos_count?: number;
 };
 
 export type ActiveIncident = {
@@ -156,6 +157,18 @@ export default function AgencyHomePage() {
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-4 w-1/2" />
         </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+            <Skeleton className="h-28 w-full" />
+        </div>
+        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-[400px] w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
         <Card>
             <CardHeader>
                 <Skeleton className="h-6 w-1/4" />
@@ -164,15 +177,6 @@ export default function AgencyHomePage() {
                 <Skeleton className="h-24 w-full" />
             </CardContent>
         </Card>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-28 w-full" />
-            <Skeleton className="h-28 w-full" />
-            <Skeleton className="h-28 w-full" />
-            <Skeleton className="h-28 w-full" />
-        </div>
-        <Skeleton className="h-[400px] w-full" />
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-64 w-full" />
       </div>
     );
   }
@@ -195,12 +199,12 @@ export default function AgencyHomePage() {
       
       <IncidentStatusBreakdown counts={data.basic_counts} />
 
+      <AgencyIncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GuardPerformanceBreakdown performance={data.guard_performance} />
         <PatrollingOfficerPerformance performance={data.patrol_officer_performance} />
       </div>
-
-      <AgencyIncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
 
       <Card className={cn(
           hasActiveIncidents ? "border-destructive bg-destructive/10" : "border-chart-2 bg-chart-2/10"
@@ -329,5 +333,3 @@ export default function AgencyHomePage() {
     </div>
   );
 }
-
-    
