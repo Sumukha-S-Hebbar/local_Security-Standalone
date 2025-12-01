@@ -191,6 +191,17 @@ export default function AgencyHomePage() {
         </div>
       </div>
 
+      <AgencyAnalyticsDashboard counts={data.basic_counts} />
+      
+      <IncidentStatusBreakdown counts={data.basic_counts} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GuardPerformanceBreakdown performance={data.guard_performance} />
+        <PatrollingOfficerPerformance performance={data.patrol_officer_performance} />
+      </div>
+
+      <AgencyIncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
+
       <Card className={cn(
           hasActiveIncidents ? "border-destructive bg-destructive/10" : "border-chart-2 bg-chart-2/10"
       )}>
@@ -315,16 +326,8 @@ export default function AgencyHomePage() {
           )}
       </Card>
 
-      <AgencyAnalyticsDashboard counts={data.basic_counts} />
-      
-      <IncidentStatusBreakdown counts={data.basic_counts} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GuardPerformanceBreakdown performance={data.guard_performance} />
-        <PatrollingOfficerPerformance performance={data.patrol_officer_performance} />
-      </div>
-
-      <AgencyIncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
     </div>
   );
 }
+
+    

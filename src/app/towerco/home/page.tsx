@@ -222,6 +222,14 @@ function TowercoHomePageContent() {
         </div>
       </div>
       
+      <TowercoAnalyticsDashboard
+        counts={data.basic_counts}
+      />
+      
+      <SiteStatusBreakdown siteStatusData={data.site_status} />
+      <AgencyPerformance performanceData={data.agency_performance} />
+      <IncidentChart incidentTrend={data.incident_trend} agencies={data.agency_performance} orgCode={org.code.toString()} />
+      
       <Card className={cn(
           hasActiveIncidents ? "border-destructive bg-destructive/10" : "border-chart-2 bg-chart-2/10"
       )}>
@@ -356,14 +364,6 @@ function TowercoHomePageContent() {
             </CardFooter>
           )}
       </Card>
-      
-      <TowercoAnalyticsDashboard
-        counts={data.basic_counts}
-      />
-      
-      <SiteStatusBreakdown siteStatusData={data.site_status} />
-      <AgencyPerformance performanceData={data.agency_performance} />
-      <IncidentChart incidentTrend={data.incident_trend} agencies={data.agency_performance} orgCode={org.code.toString()} />
     </div>
   );
 }
@@ -375,3 +375,5 @@ export default function TowercoHomePage() {
         </Suspense>
     )
 }
+
+    
