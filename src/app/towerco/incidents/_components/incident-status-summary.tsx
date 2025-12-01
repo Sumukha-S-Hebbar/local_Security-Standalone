@@ -28,7 +28,7 @@ export function IncidentStatusSummary({
       status: 'sos',
       count: counts.sos_count ?? 0,
       label: 'SOS',
-      icon: ShieldAlert,
+      icon: AlertTriangle,
       bg: 'bg-[#FF0000]',
       ring: 'ring-red-500'
     },

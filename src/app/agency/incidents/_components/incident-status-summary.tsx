@@ -1,7 +1,6 @@
 
 'use client';
 
-import type { Incident } from '@/types';
 import { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShieldAlert, ShieldQuestion, CheckCircle2, AlertTriangle } from 'lucide-react';
@@ -30,7 +29,7 @@ export function IncidentStatusSummary({
       status: 'sos',
       count: counts.sos_count ?? 0,
       label: 'SOS',
-      icon: ShieldAlert,
+      icon: AlertTriangle,
       bg: 'bg-[#FF0000]',
       ring: 'ring-red-500'
     },
