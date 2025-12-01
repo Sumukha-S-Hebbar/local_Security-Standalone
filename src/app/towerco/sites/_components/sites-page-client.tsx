@@ -174,8 +174,8 @@ export function SitesPageClient() {
   const fetchAgencies = useCallback(async () => {
     if (!loggedInOrg || !token) return;
     try {
-        const agenciesResponse = await fetchData<{results: SecurityAgency[]}>(`/orgs/${loggedInOrg.code}/security-agencies/list`, token);
-        setAllAgencies(agenciesResponse?.results || []);
+        const agenciesResponse = await fetchData<SecurityAgency[]>(`/orgs/${loggedInOrg.code}/assign_agency/list/`, token);
+        setAllAgencies(agenciesResponse || []);
     } catch (error) {
         toast({
             variant: 'destructive',
