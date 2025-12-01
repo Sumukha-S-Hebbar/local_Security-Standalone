@@ -175,19 +175,15 @@ export function SitesPageClient() {
     if (!loggedInOrg || !token) return;
 
     try {
-        const poResponse = await fetchData<{results: any[]}>(`/agency/${loggedInOrg.code}/patrol_officers/list/`, token);
-        const formattedPOs = poResponse?.results.map((po) => ({
+        const poResponse = await fetchData<any[]>(`/agency/${loggedInOrg.code}/assign_patrol_officer/list/`, token);
+        const formattedPOs = poResponse?.map((po) => ({
             id: po.id,
             employee_id: po.employee_id,
             first_name: po.first_name,
             last_name: po.last_name,
             name: `${po.first_name} ${po.last_name || ''}`.trim(),
             email: po.email,
-            phone: po.phone,
-            avatar: po.profile_picture,
             city: po.city,
-            sites_assigned_count: po.sites_assigned_count,
-            incidents_count: po.incidents_count,
         })) || [];
         setPatrollingOfficers(formattedPOs);
 
