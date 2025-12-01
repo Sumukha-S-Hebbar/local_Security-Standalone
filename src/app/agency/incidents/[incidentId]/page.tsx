@@ -481,7 +481,7 @@ export default function AgencyIncidentReportPage() {
                 {new Date(incident.incident_time).toLocaleString()}
               </CardDescription>
             </div>
-            {incident.incident_type && incident.incident_type !== 'SOS' && (
+            {incident.incident_type && (
               <div className="text-right">
                  <CardTitle className="text-xl font-bold">Incident Type</CardTitle>
                 <Badge variant="destructive" className="mt-1">{incident.incident_type}</Badge>
