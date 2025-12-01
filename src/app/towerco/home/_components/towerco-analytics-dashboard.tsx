@@ -3,14 +3,14 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, Briefcase, ShieldAlert, Users } from 'lucide-react';
+import { Building2, Briefcase, UserCheck, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 type BasicCounts = {
-  active_incidents_count: number;
   total_guards_count: number;
   total_sites_count: number;
   total_agencies_count: number;
+  total_patrol_officers_count: number;
 };
 
 
@@ -23,15 +23,15 @@ export function TowercoAnalyticsDashboard({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer" onClick={() => router.push('/towerco/incidents?status=active')}>
+      <Card className="transition-all hover:bg-accent hover:text-accent-foreground group cursor-pointer">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Active Incidents</CardTitle>
-          <ShieldAlert className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
+          <CardTitle className="text-sm font-medium">Total Patrolling Officers</CardTitle>
+          <UserCheck className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{counts.active_incidents_count}</div>
+          <div className="text-2xl font-bold">{counts.total_patrol_officers_count}</div>
           <p className="text-xs text-muted-foreground font-medium group-hover:text-accent-foreground">
-            Ongoing emergency incidents
+            Team leaders across all agencies
           </p>
         </CardContent>
       </Card>

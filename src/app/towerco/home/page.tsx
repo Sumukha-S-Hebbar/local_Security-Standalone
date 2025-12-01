@@ -43,6 +43,7 @@ export type BasicCounts = {
   total_guards_count: number;
   total_sites_count: number;
   total_agencies_count: number;
+  total_patrol_officers_count: number;
 };
 
 export type IncidentListItem = {
