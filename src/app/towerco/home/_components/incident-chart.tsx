@@ -77,17 +77,24 @@ type DashboardData = {
     agency_performance: AgencyPerformanceData[];
 }
 
+type Agency = {
+    id: number;
+    name: string;
+    subcon_id: string;
+    region: string;
+    city: string;
+}
+
 export function IncidentChart({
     incidentTrend,
-    agencies,
     orgCode
 }: {
     incidentTrend: IncidentTrendData[];
-    agencies: AgencyPerformanceData[];
     orgCode: string;
 }) {
   const router = useRouter();
   
+  const [agencies, setAgencies] = useState<Agency[]>([]);
   const [selectedAgency, setSelectedAgency] = useState<string>('all');
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
 
@@ -108,6 +115,21 @@ export function IncidentChart({
         }
     }
   }, []);
+  
+  useEffect(() => {
+    if (orgCode && token) {
+      const fetchAgencies = async () => {
+        try {
+          const url = `/orgs/${orgCode}/assign_agency/list/`;
+          const data = await fetchData<Agency[]>(url, token);
+          setAgencies(data || []);
+        } catch (error) {
+          console.error("Failed to fetch agencies for incident chart", error);
+        }
+      };
+      fetchAgencies();
+    }
+  }, [orgCode, token]);
 
   // This should now be a derived state from props
   const [currentIncidentTrend, setCurrentIncidentTrend] = useState(incidentTrend);
@@ -236,8 +258,8 @@ export function IncidentChart({
                 <SelectContent>
                 <SelectItem value="all" className="font-medium">All Agencies</SelectItem>
                  {agencies.map(agency => (
-                    <SelectItem key={agency.agency_name} value={agency.agency_name} className="font-medium">
-                        {agency.agency_name}
+                    <SelectItem key={agency.id} value={agency.name} className="font-medium">
+                        {agency.name}
                     </SelectItem>
                 ))}
                 </SelectContent>
