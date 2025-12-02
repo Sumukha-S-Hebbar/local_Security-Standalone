@@ -232,14 +232,8 @@ export default function TowercoAgenciesPage() {
         if (loggedInOrg) {
             fetchAllAgencies();
         }
-    }, [loggedInOrg, fetchAllAgencies]);
+    }, [loggedInOrg, searchQuery, selectedRegion, selectedCity, fetchAllAgencies]);
     
-    useEffect(() => {
-        if (loggedInOrg) {
-            fetchAllAgencies();
-        }
-    }, [searchQuery, selectedRegion, selectedCity, loggedInOrg, fetchAllAgencies]);
-
 
     const uploadForm = useForm<z.infer<typeof uploadFormSchema>>({
         resolver: zodResolver(uploadFormSchema),
