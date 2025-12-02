@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import type { Site, Organization } from '@/types';
 import {
@@ -86,6 +86,9 @@ export function IncidentsPageClient() {
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [nextUrl, setNextUrl] = useState<string | null>(null);
+  const [prevUrl, setPrevUrl] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -119,12 +122,13 @@ export function IncidentsPageClient() {
     fetchSupportingData();
   }, [loggedInOrg, token]);
   
-   useEffect(() => {
-    if (!loggedInOrg) return;
+   const fetchFilteredIncidents = useCallback(async (url?: string) => {
+    if (!loggedInOrg || !token) return;
 
-    const fetchFilteredIncidents = async () => {
-      setIsLoading(true);
-      
+    setIsLoading(true);
+    let fetchUrl = url;
+
+    if (!fetchUrl) {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         page_size: ITEMS_PER_PAGE.toString(),
@@ -149,12 +153,15 @@ export function IncidentsPageClient() {
       if (selectedYear !== 'all') params.append('year', selectedYear);
       if (selectedMonth !== 'all') params.append('month', selectedMonth);
       
-      const url = `/agency/${loggedInOrg.code}/incidents/list/?${params.toString()}`;
+      fetchUrl = `/agency/${loggedInOrg.code}/incidents/list/?${params.toString()}`;
+    }
 
       try {
-        const data = await fetchData<PaginatedIncidentsResponse>(url, token || undefined);
+        const data = await fetchData<PaginatedIncidentsResponse>(fetchUrl, token);
         setIncidents(data?.results || []);
         setTotalCount(data?.count || 0);
+        setNextUrl(data?.next || null);
+        setPrevUrl(data?.previous || null);
         if (data?.counts) {
             setIncidentCounts(data.counts);
         }
@@ -165,11 +172,12 @@ export function IncidentsPageClient() {
       } finally {
         setIsLoading(false);
       }
-    };
+   }, [loggedInOrg, token, currentPage, searchQuery, selectedStatus, selectedSite, selectedYear, selectedMonth]);
 
+  useEffect(() => {
     fetchFilteredIncidents();
-  }, [loggedInOrg, selectedStatus, searchQuery, selectedSite, selectedYear, selectedMonth, currentPage, token]);
-
+  }, [fetchFilteredIncidents]);
+  
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedStatus, selectedSite, selectedYear, selectedMonth]);
@@ -370,8 +378,8 @@ export function IncidentsPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                            disabled={currentPage === 1}
+                            onClick={() => fetchFilteredIncidents(prevUrl || undefined)}
+                            disabled={!prevUrl}
                             className="w-20"
                         >
                             Previous
@@ -380,8 +388,8 @@ export function IncidentsPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                            disabled={currentPage === totalPages || totalPages === 0}
+                            onClick={() => fetchFilteredIncidents(nextUrl || undefined)}
+                            disabled={!nextUrl}
                             className="w-20"
                         >
                             Next
@@ -394,3 +402,5 @@ export function IncidentsPageClient() {
     </div>
   );
 }
+
+    
