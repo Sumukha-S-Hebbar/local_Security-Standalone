@@ -161,6 +161,9 @@ function TowercoHomePageContent() {
   const [org, setOrg] = useState<Organization | null>(null);
   const [token, setToken] = useState<string | null>(null);
   
+  const [selectedAgency, setSelectedAgency] = useState('all');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedUserData = localStorage.getItem('userData');
@@ -174,15 +177,25 @@ function TowercoHomePageContent() {
     }
   }, [router]);
 
-  const getDashboardData = useCallback(async (url: string) => {
-    if (!token) return null;
+  const getDashboardData = useCallback(async (agencyName: string, year: string) => {
+    if (!org || !token) return null;
+
+    const params = new URLSearchParams();
+    if (agencyName !== 'all') {
+        params.append('agency_name', agencyName);
+    }
+    if (year !== 'all') {
+        params.append('year', year);
+    }
+
+    const url = `/orgs/${org.code}/security-dashboard/?${params.toString()}`;
     return await fetchData<DashboardData>(url, token);
-  }, [token]);
+  }, [org, token]);
 
   useEffect(() => {
     if (org && token) {
-      const url = `/orgs/${org.code}/security-dashboard/`;
-      getDashboardData(url)
+      setIsLoading(true);
+      getDashboardData(selectedAgency, selectedYear)
         .then(setData)
         .catch(err => {
           console.error(err);
@@ -190,13 +203,13 @@ function TowercoHomePageContent() {
         })
         .finally(() => setIsLoading(false));
     }
-  }, [org, token, getDashboardData]);
+  }, [org, token, getDashboardData, selectedAgency, selectedYear]);
   
   const handleIncidentPagination = async (url: string | null) => {
-    if (!url || !data) return;
+    if (!url || !data || !org || !token) return;
     setIsIncidentsLoading(true);
     try {
-        const paginatedData = await getDashboardData(url);
+        const paginatedData = await fetchData<DashboardData>(url, token);
         if (paginatedData) {
             setData({ ...data, active_incidents: paginatedData.active_incidents });
         }
@@ -234,7 +247,14 @@ function TowercoHomePageContent() {
       
       <SiteStatusBreakdown siteStatusData={data.site_status} />
       <AgencyPerformance performanceData={data.agency_performance} />
-      <IncidentChart incidentTrend={data.incident_trend} orgCode={org.code.toString()} />
+      <IncidentChart 
+        incidentTrend={data.incident_trend} 
+        orgCode={org.code.toString()}
+        selectedAgency={selectedAgency}
+        onAgencyChange={setSelectedAgency}
+        selectedYear={selectedYear}
+        onYearChange={setSelectedYear}
+      />
       
       <Card className={cn(
           hasActiveIncidents ? "border-destructive bg-destructive/10" : "border-chart-2 bg-chart-2/10"

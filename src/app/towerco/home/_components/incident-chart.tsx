@@ -72,11 +72,6 @@ type PaginatedIncidentsResponse = {
     results: IncidentListItem[];
 };
 
-type DashboardData = {
-    incident_trend: IncidentTrendData[];
-    agency_performance: AgencyPerformanceData[];
-}
-
 type Agency = {
     id: number;
     name: string;
@@ -87,17 +82,22 @@ type Agency = {
 
 export function IncidentChart({
     incidentTrend,
-    orgCode
+    orgCode,
+    selectedAgency,
+    onAgencyChange,
+    selectedYear,
+    onYearChange,
 }: {
     incidentTrend: IncidentTrendData[];
     orgCode: string;
+    selectedAgency: string;
+    onAgencyChange: (agency: string) => void;
+    selectedYear: string;
+    onYearChange: (year: string) => void;
 }) {
   const router = useRouter();
   
   const [agencies, setAgencies] = useState<Agency[]>([]);
-  const [selectedAgency, setSelectedAgency] = useState<string>('all');
-  const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
-
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
   const collapsibleRef = useRef<HTMLDivElement>(null);
@@ -131,11 +131,8 @@ export function IncidentChart({
     }
   }, [orgCode, token]);
 
-  // This should now be a derived state from props
-  const [currentIncidentTrend, setCurrentIncidentTrend] = useState(incidentTrend);
-
   const monthlyIncidentData = useMemo(() => {
-    return currentIncidentTrend.map(monthData => ({
+    return incidentTrend.map(monthData => ({
         month: monthData.month,
         total: monthData.total,
         resolved: monthData.resolved,
@@ -143,7 +140,7 @@ export function IncidentChart({
         avgClosure: null,
         closureTimeFormatted: monthData.resolution_duration,
     }));
-  }, [currentIncidentTrend]);
+  }, [incidentTrend]);
   
   const availableYears = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -251,7 +248,7 @@ export function IncidentChart({
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-            <Select value={selectedAgency} onValueChange={setSelectedAgency}>
+            <Select value={selectedAgency} onValueChange={onAgencyChange}>
                 <SelectTrigger className="w-full sm:w-[180px] font-medium hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Select Agency" />
                 </SelectTrigger>
@@ -264,7 +261,7 @@ export function IncidentChart({
                 ))}
                 </SelectContent>
             </Select>
-            <Select value={selectedYear} onValueChange={setSelectedYear}>
+            <Select value={selectedYear} onValueChange={onYearChange}>
                 <SelectTrigger className="w-full sm:w-[120px] font-medium hover:bg-accent hover:text-accent-foreground">
                 <SelectValue placeholder="Select Year" />
                 </SelectTrigger>

@@ -25,8 +25,14 @@ export async function fetchData<T>(url: string, token?: string): Promise<T | nul
         if (response.status === 204) { // No Content
             return null;
         }
+        
+        const text = await response.text();
+        if (!text) {
+            // Handle empty response body for non-204 statuses
+            return null;
+        }
 
-        return await response.json() as T;
+        return JSON.parse(text) as T;
     } catch (error) {
         console.error("Network or parsing error:", error);
         // re-throw the error so it can be handled by the calling component
