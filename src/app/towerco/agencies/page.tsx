@@ -127,7 +127,6 @@ export default function TowercoAgenciesPage() {
     const [loggedInOrg, setLoggedInOrg] = useState<Organization | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const [token, setToken] = useState<string|null>(null);
-    const [apiRegions, setApiRegions] = useState<ApiRegion[]>([]);
     const [apiCities, setApiCities] = useState<ApiCity[]>([]);
     const [isCitiesLoading, setIsCitiesLoading] = useState(false);
 
@@ -179,7 +178,7 @@ export default function TowercoAgenciesPage() {
     }, [loggedInOrg, token, searchQuery, selectedRegion, selectedCity, toast]);
     
     useEffect(() => {
-      async function fetchFilterRegions() {
+      async function fetchFilterData() {
           if (!loggedInUser || !loggedInUser.country || !token) return;
           const countryId = loggedInUser.country.id;
           const url = `/regions/?country=${countryId}`;
@@ -190,7 +189,7 @@ export default function TowercoAgenciesPage() {
               console.error("Failed to fetch regions for filters:", error);
           }
       }
-      fetchFilterRegions();
+      fetchFilterData();
     }, [loggedInUser, token]);
     
     useEffect(() => {
@@ -255,28 +254,6 @@ export default function TowercoAgenciesPage() {
     });
 
     const watchedRegion = addAgencyForm.watch('region');
-
-    useEffect(() => {
-        async function fetchRegions() {
-            if (!loggedInUser || !loggedInUser.country || !token) return;
-
-            const countryId = loggedInUser.country.id;
-            const url = `/regions/?country=${countryId}`;
-            
-            try {
-                const data = await fetchData<{ regions: ApiRegion[] }>(url, token);
-                setApiRegions(data?.regions || []);
-            } catch (error) {
-                console.error("Failed to fetch regions:", error);
-                toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Could not load regions for the selection.",
-                });
-            }
-        }
-        fetchRegions();
-    }, [loggedInUser, toast, token]);
 
     useEffect(() => {
         async function fetchCities() {
@@ -418,7 +395,7 @@ export default function TowercoAgenciesPage() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                     <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -609,7 +586,7 @@ export default function TowercoAgenciesPage() {
                                                             </SelectTrigger>
                                                         </FormControl>
                                                         <SelectContent>
-                                                            {apiRegions.map(region => (
+                                                            {filterRegions.map(region => (
                                                                 <SelectItem key={region.id} value={region.id.toString()}>
                                                                     {region.name}
                                                                 </SelectItem>
@@ -829,3 +806,5 @@ export default function TowercoAgenciesPage() {
     );
 }
 
+
+    
