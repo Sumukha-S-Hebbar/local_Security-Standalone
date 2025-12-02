@@ -129,10 +129,7 @@ export function IncidentsPageClient() {
     let fetchUrl = url;
 
     if (!fetchUrl) {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        page_size: ITEMS_PER_PAGE.toString(),
-      });
+      const params = new URLSearchParams();
       
       if (selectedStatus !== 'all') {
         if (selectedStatus === 'sos') {
@@ -165,6 +162,11 @@ export function IncidentsPageClient() {
         if (data?.counts) {
             setIncidentCounts(data.counts);
         }
+        
+        const urlObject = new URL(fetchUrl, getApiBaseUrl());
+        const pageParam = urlObject.searchParams.get('page');
+        setCurrentPage(pageParam ? parseInt(pageParam) : 1);
+        
       } catch (error) {
         console.error("Failed to fetch filtered incidents:", error);
         setIncidents([]);
@@ -172,7 +174,7 @@ export function IncidentsPageClient() {
       } finally {
         setIsLoading(false);
       }
-   }, [loggedInOrg, token, currentPage, searchQuery, selectedStatus, selectedSite, selectedYear, selectedMonth]);
+   }, [loggedInOrg, token, searchQuery, selectedStatus, selectedSite, selectedYear, selectedMonth]);
 
   useEffect(() => {
     fetchFilteredIncidents();

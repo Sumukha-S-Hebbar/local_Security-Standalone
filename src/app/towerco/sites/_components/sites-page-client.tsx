@@ -186,28 +186,31 @@ export function SitesPageClient() {
   }, [loggedInOrg, token, toast]);
 
 
-  const fetchSites = useCallback(async (status: 'Assigned' | 'Unassigned', page: number) => {
+  const fetchSites = useCallback(async (status: 'Assigned' | 'Unassigned', url?: string) => {
     if (!loggedInOrg || !token) return;
     setIsLoading(true);
     
-    const params = new URLSearchParams({
-        site_status: status,
-        page: page.toString(),
-        page_size: ITEMS_PER_PAGE.toString(),
-    });
+    let fetchUrl = url;
+    if (!fetchUrl) {
+      const params = new URLSearchParams({
+          site_status: status,
+      });
 
-    if (status === 'Assigned') {
-        if (assignedSearchQuery) params.append('search', assignedSearchQuery);
-        if (assignedSelectedRegion !== 'all') params.append('region', assignedSelectedRegion);
-        if (assignedSelectedCity !== 'all') params.append('city', assignedSelectedCity);
-    } else {
-        if (unassignedSearchQuery) params.append('search', unassignedSearchQuery);
-        if (unassignedSelectedRegion !== 'all') params.append('region', unassignedSelectedRegion);
-        if (unassignedSelectedCity !== 'all') params.append('city', unassignedSelectedCity);
+      if (status === 'Assigned') {
+          if (assignedSearchQuery) params.append('search', assignedSearchQuery);
+          if (assignedSelectedRegion !== 'all') params.append('region', assignedSelectedRegion);
+          if (assignedSelectedCity !== 'all') params.append('city', assignedSelectedCity);
+      } else {
+          if (unassignedSearchQuery) params.append('search', unassignedSearchQuery);
+          if (unassignedSelectedRegion !== 'all') params.append('region', unassignedSelectedRegion);
+          if (unassignedSelectedCity !== 'all') params.append('city', unassignedSelectedCity);
+      }
+      fetchUrl = `/orgs/${loggedInOrg.code}/sites/list/?${params.toString()}`;
     }
 
+
     try {
-        const response = await fetchData<PaginatedSitesResponse>(`/orgs/${loggedInOrg.code}/sites/list/?${params.toString()}`, token);
+        const response = await fetchData<PaginatedSitesResponse>(fetchUrl, token);
         if (status === 'Assigned') {
             setAssignedSites(response?.results || []);
             setAssignedSitesCount(response?.count || 0);
@@ -219,6 +222,15 @@ export function SitesPageClient() {
             setUnassignedNextUrl(response?.next || null);
             setUnassignedPrevUrl(response?.previous || null);
         }
+
+        const urlObject = new URL(fetchUrl, getApiBaseUrl());
+        const pageParam = urlObject.searchParams.get('page');
+        if (status === 'Assigned') {
+            setAssignedCurrentPage(pageParam ? parseInt(pageParam) : 1);
+        } else {
+            setUnassignedCurrentPage(pageParam ? parseInt(pageParam) : 1);
+        }
+
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -230,37 +242,11 @@ export function SitesPageClient() {
     }
   }, [loggedInOrg, token, toast, assignedSearchQuery, assignedSelectedRegion, assignedSelectedCity, unassignedSearchQuery, unassignedSelectedRegion, unassignedSelectedCity]);
 
-  const handlePagination = useCallback(async (url: string, status: 'Assigned' | 'Unassigned') => {
-    if (!loggedInOrg || !url || !token) return;
-    setIsLoading(true);
-
-    try {
-      const response = await fetchData<PaginatedSitesResponse>(url, token);
-      if (status === 'Assigned') {
-        setAssignedSites(response?.results || []);
-        setAssignedSitesCount(response?.count || 0);
-        setAssignedNextUrl(response?.next || null);
-        setAssignedPrevUrl(response?.previous || null);
-        const page = new URL(url).searchParams.get('page');
-        setAssignedCurrentPage(page ? parseInt(page) : 1);
-      } else {
-        setUnassignedSites(response?.results || []);
-        setUnassignedSitesCount(response?.count || 0);
-        setUnassignedNextUrl(response?.next || null);
-        setUnassignedPrevUrl(response?.previous || null);
-        const page = new URL(url).searchParams.get('page');
-        setUnassignedCurrentPage(page ? parseInt(page) : 1);
-      }
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: `Failed to load page.`,
-      });
-    } finally {
-      setIsLoading(false);
+  const handlePagination = (status: 'Assigned' | 'Unassigned', url: string | null) => {
+    if (url) {
+      fetchSites(status, url);
     }
-  }, [loggedInOrg, toast, token]);
+  };
 
     useEffect(() => {
         async function fetchFilterRegions() {
@@ -315,15 +301,22 @@ export function SitesPageClient() {
   useEffect(() => {
     if (loggedInOrg) {
         if (activeTab === 'assigned') {
-            fetchSites('Assigned', assignedCurrentPage);
+            fetchSites('Assigned');
         } else {
-            fetchSites('Unassigned', unassignedCurrentPage);
+            fetchSites('Unassigned');
         }
     }
-  }, [loggedInOrg, activeTab, fetchSites, assignedCurrentPage, unassignedCurrentPage]);
+  }, [loggedInOrg, activeTab, fetchSites]);
 
-  useEffect(() => setAssignedCurrentPage(1), [assignedSearchQuery, assignedSelectedRegion, assignedSelectedCity]);
-  useEffect(() => setUnassignedCurrentPage(1), [unassignedSearchQuery, unassignedSelectedRegion, unassignedSelectedCity]);
+  useEffect(() => {
+    if (loggedInOrg) {
+        if (activeTab === 'assigned') {
+            fetchSites('Assigned');
+        } else {
+            fetchSites('Unassigned');
+        }
+    }
+  }, [assignedSearchQuery, assignedSelectedRegion, assignedSelectedCity, unassignedSearchQuery, unassignedSelectedRegion, unassignedSelectedCity]);
 
 
   useEffect(() => {
@@ -462,8 +455,8 @@ export function SitesPageClient() {
           description: responseData.detail,
         });
         
-        fetchSites('Assigned', assignedCurrentPage);
-        fetchSites('Unassigned', unassignedCurrentPage);
+        fetchSites('Assigned');
+        fetchSites('Unassigned');
 
     } catch (error: any) {
         toast({
@@ -508,7 +501,7 @@ export function SitesPageClient() {
         });
         
         setActiveTab('unassigned');
-        await fetchSites('Unassigned', 1);
+        await fetchSites('Unassigned');
         setIsAddSiteDialogOpen(false);
         addSiteForm.reset();
 
@@ -535,7 +528,7 @@ export function SitesPageClient() {
     const fileInput = document.getElementById('excelFile-site-input') as HTMLInputElement | null;
     if (fileInput) fileInput.value = '';
     setIsUploadDialogOpen(false);
-    fetchSites('Unassigned', 1);
+    fetchSites('Unassigned');
   }
 
   const handleDownloadTemplate = () => {
@@ -804,7 +797,7 @@ export function SitesPageClient() {
       </div>
       
       <Card>
-        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+        <Tabs defaultValue={initialTab} onValueChange={setActiveTab}>
           <CardHeader>
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="assigned">Assigned</TabsTrigger>
@@ -1041,7 +1034,7 @@ export function SitesPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handlePagination(activeTab === 'assigned' ? assignedPrevUrl! : unassignedPrevUrl!, activeTab as 'Assigned' | 'Unassigned')}
+                            onClick={() => handlePagination(activeTab as 'Assigned' | 'Unassigned', activeTab === 'assigned' ? assignedPrevUrl : unassignedPrevUrl)}
                             disabled={isLoading || (activeTab === 'assigned' ? !assignedPrevUrl : !unassignedPrevUrl)}
                             className="w-20"
                         >
@@ -1053,7 +1046,7 @@ export function SitesPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handlePagination(activeTab === 'assigned' ? assignedNextUrl! : unassignedNextUrl!, activeTab as 'Assigned' | 'Unassigned')}
+                            onClick={() => handlePagination(activeTab as 'Assigned' | 'Unassigned', activeTab === 'assigned' ? assignedNextUrl : unassignedNextUrl)}
                             disabled={isLoading || (activeTab === 'assigned' ? !assignedNextUrl : !unassignedNextUrl)}
                             className="w-20"
                         >

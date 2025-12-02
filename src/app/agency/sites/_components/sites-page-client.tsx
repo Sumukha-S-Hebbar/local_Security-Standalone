@@ -121,37 +121,31 @@ export function SitesPageClient() {
     }
   }, []);
 
-  const fetchSites = useCallback(async (status: 'Assigned' | 'Unassigned', page: number) => {
+  const fetchSites = useCallback(async (status: 'Assigned' | 'Unassigned', url?: string) => {
     if (!loggedInOrg || !token) return;
     setIsLoading(true);
 
-    const params = new URLSearchParams({
-        personnel_assignment_status: status,
-        page: page.toString(),
-        page_size: ITEMS_PER_PAGE.toString(),
-    });
+    let fetchUrl = url;
+    if (!fetchUrl) {
+        const params = new URLSearchParams({
+            personnel_assignment_status: status,
+        });
 
-    if (status === 'Assigned') {
-        if (assignedSearchQuery) params.append('search', assignedSearchQuery);
-        if (selectedPatrollingOfficerFilter !== 'all') params.append('patrol_officer', selectedPatrollingOfficerFilter);
-        if (assignedSelectedRegion !== 'all') {
-          params.append('region', assignedSelectedRegion);
+        if (status === 'Assigned') {
+            if (assignedSearchQuery) params.append('search', assignedSearchQuery);
+            if (selectedPatrollingOfficerFilter !== 'all') params.append('patrol_officer', selectedPatrollingOfficerFilter);
+            if (assignedSelectedRegion !== 'all') params.append('region', assignedSelectedRegion);
+            if (assignedSelectedCity !== 'all') params.append('city', assignedSelectedCity);
+        } else {
+            if (unassignedSearchQuery) params.append('search', unassignedSearchQuery);
+            if (unassignedSelectedRegion !== 'all') params.append('region', unassignedSelectedRegion);
+            if (unassignedSelectedCity !== 'all') params.append('city', unassignedSelectedCity);
         }
-        if (assignedSelectedCity !== 'all') {
-            params.append('city', assignedSelectedCity);
-        }
-    } else {
-        if (unassignedSearchQuery) params.append('search', unassignedSearchQuery);
-        if (unassignedSelectedRegion !== 'all') {
-            params.append('region', unassignedSelectedRegion);
-        }
-        if (unassignedSelectedCity !== 'all') {
-            params.append('city', unassignedSelectedCity);
-        }
+        fetchUrl = `/agency/${loggedInOrg.code}/sites/list/?${params.toString()}`;
     }
 
     try {
-        const response = await fetchData<PaginatedSitesResponse>(`/agency/${loggedInOrg.code}/sites/list/?${params.toString()}`, token);
+        const response = await fetchData<PaginatedSitesResponse>(fetchUrl, token);
         if (status === 'Assigned') {
             setAssignedSites(response?.results || []);
             setAssignedSitesCount(response?.count || 0);
@@ -159,6 +153,15 @@ export function SitesPageClient() {
             setUnassignedSites(response?.results || []);
             setUnassignedSitesCount(response?.count || 0);
         }
+
+        const urlObject = new URL(fetchUrl, getApiBaseUrl());
+        const pageParam = urlObject.searchParams.get('page');
+        if (status === 'Assigned') {
+            setAssignedCurrentPage(pageParam ? parseInt(pageParam) : 1);
+        } else {
+            setUnassignedCurrentPage(pageParam ? parseInt(pageParam) : 1);
+        }
+
     } catch (error) {
         toast({
             variant: 'destructive',
@@ -208,12 +211,12 @@ export function SitesPageClient() {
   useEffect(() => {
     if (loggedInOrg) {
         if (activeTab === 'assigned') {
-            fetchSites('Assigned', assignedCurrentPage);
+            fetchSites('Assigned');
         } else {
-            fetchSites('Unassigned', unassignedCurrentPage);
+            fetchSites('Unassigned');
         }
     }
-  }, [loggedInOrg, activeTab, fetchSites, assignedCurrentPage, unassignedCurrentPage]);
+  }, [loggedInOrg, activeTab, fetchSites]);
 
 
   // Set default geofence value for unassigned sites
@@ -417,9 +420,9 @@ export function SitesPageClient() {
           title: 'Site Assigned Successfully',
           description: responseData.message || 'Personnel have been assigned to the site.',
         });
-
-        fetchSites('Assigned', 1);
-        fetchSites('Unassigned', 1);
+        
+        fetchSites('Assigned');
+        fetchSites('Unassigned');
 
     } catch (error: any) {
         toast({
@@ -514,9 +517,11 @@ export function SitesPageClient() {
 
   const handlePagination = (direction: 'next' | 'prev', list: 'assigned' | 'unassigned') => {
     if (list === 'assigned') {
-      setAssignedCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
+      const url = direction === 'next' ? assignedSites.length > 0 && assignedCurrentPage < assignedTotalPages ? `/agency/${loggedInOrg?.code}/sites/list/?page=${assignedCurrentPage + 1}&personnel_assignment_status=Assigned` : null : assignedCurrentPage > 1 ? `/agency/${loggedInOrg?.code}/sites/list/?page=${assignedCurrentPage - 1}&personnel_assignment_status=Assigned` : null;
+      if(url) fetchSites('Assigned', url);
     } else {
-      setUnassignedCurrentPage(prev => direction === 'next' ? prev + 1 : prev - 1);
+      const url = direction === 'next' ? unassignedSites.length > 0 && unassignedCurrentPage < unassignedTotalPages ? `/agency/${loggedInOrg?.code}/sites/list/?page=${unassignedCurrentPage + 1}&personnel_assignment_status=Unassigned` : null : unassignedCurrentPage > 1 ? `/agency/${loggedInOrg?.code}/sites/list/?page=${unassignedCurrentPage - 1}&personnel_assignment_status=Unassigned` : null;
+      if(url) fetchSites('Unassigned', url);
     }
   };
 
@@ -786,7 +791,7 @@ export function SitesPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handlePagination('prev', activeTab === 'assigned' ? 'assigned' : 'unassigned')}
+                            onClick={() => handlePagination('prev', activeTab as 'assigned' | 'unassigned')}
                             disabled={isLoading || (activeTab === 'assigned' ? assignedCurrentPage === 1 : unassignedCurrentPage === 1)}
                         >
                             Previous
@@ -797,7 +802,7 @@ export function SitesPageClient() {
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handlePagination('next', activeTab === 'assigned' ? 'assigned' : 'unassigned')}
+                            onClick={() => handlePagination('next', activeTab as 'assigned' | 'unassigned')}
                             disabled={isLoading || (activeTab === 'assigned' ? assignedCurrentPage >= assignedTotalPages : unassignedCurrentPage >= unassignedTotalPages)}
                         >
                             Next

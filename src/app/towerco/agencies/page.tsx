@@ -143,31 +143,32 @@ export default function TowercoAgenciesPage() {
      }
     }, []);
 
-    const fetchAllAgencies = useCallback(async (page: number = 1) => {
+    const fetchAllAgencies = useCallback(async (url?: string) => {
         if (!loggedInOrg || !token) return;
         setIsLoading(true);
         const orgCode = loggedInOrg.code;
 
-        const params = new URLSearchParams({
-            page: page.toString(),
-            page_size: ITEMS_PER_PAGE.toString(),
-        });
-        if (searchQuery) params.append('search', searchQuery);
-        if (selectedRegion !== 'all') {
-            params.append('region', selectedRegion);
-        }
-        if (selectedCity !== 'all') {
-            params.append('city', selectedCity);
+        let fetchUrl = url;
+        if (!fetchUrl) {
+            const params = new URLSearchParams();
+            if (searchQuery) params.append('search', searchQuery);
+            if (selectedRegion !== 'all') params.append('region', selectedRegion);
+            if (selectedCity !== 'all') params.append('city', selectedCity);
+            fetchUrl = `/orgs/${orgCode}/security-agencies/list/?${params.toString()}`;
         }
 
         try {
-            const response = await fetchData<PaginatedAgenciesResponse>(`/orgs/${orgCode}/security-agencies/list/?${params.toString()}`, token);
+            const response = await fetchData<PaginatedAgenciesResponse>(fetchUrl, token);
             
             const fetchedAgencies = response?.results || [];
             setSecurityAgencies(fetchedAgencies);
             setTotalCount(response?.count || 0);
             setNextUrl(response?.next || null);
             setPrevUrl(response?.previous || null);
+
+            const urlObject = new URL(fetchUrl, getApiBaseUrl());
+            const pageParam = urlObject.searchParams.get('page');
+            setCurrentPage(pageParam ? parseInt(pageParam) : 1);
 
         } catch (error) {
             console.error("Failed to fetch agencies:", error);
@@ -220,38 +221,22 @@ export default function TowercoAgenciesPage() {
     };
 
 
-    const handlePagination = useCallback(async (url: string | null) => {
-        if (!url || !loggedInOrg || !token) return;
-        setIsLoading(true);
-
-        try {
-            const response = await fetchData<PaginatedAgenciesResponse>(url, token);
-            setSecurityAgencies(response?.results || []);
-            setTotalCount(response?.count || 0);
-            setNextUrl(response?.next || null);
-            setPrevUrl(response?.previous || null);
-            
-            const urlObject = new URL(url);
-            const pageParam = urlObject.searchParams.get('page');
-            setCurrentPage(pageParam ? parseInt(pageParam) : 1);
-        } catch (error) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to load page.' });
-        } finally {
-            setIsLoading(false);
+    const handlePagination = useCallback((url: string | null) => {
+        if (url) {
+            fetchAllAgencies(url);
         }
-    }, [loggedInOrg, toast, token]);
+    }, [fetchAllAgencies]);
 
 
     useEffect(() => {
         if (loggedInOrg) {
-            fetchAllAgencies(currentPage);
+            fetchAllAgencies();
         }
-    }, [loggedInOrg, currentPage, fetchAllAgencies]);
+    }, [loggedInOrg, fetchAllAgencies]);
     
     useEffect(() => {
-        setCurrentPage(1);
         if (loggedInOrg) {
-            fetchAllAgencies(1);
+            fetchAllAgencies();
         }
     }, [searchQuery, selectedRegion, selectedCity, loggedInOrg, fetchAllAgencies]);
 
@@ -849,3 +834,4 @@ export default function TowercoAgenciesPage() {
         </div>
     );
 }
+

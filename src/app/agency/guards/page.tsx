@@ -176,7 +176,7 @@ export default function AgencyGuardsPage() {
     let fetchUrl = url;
 
     if (!fetchUrl) {
-      const params = new URLSearchParams({ page_size: ITEMS_PER_PAGE.toString() });
+      const params = new URLSearchParams();
 
       if (searchQuery) params.append('search', searchQuery);
 
