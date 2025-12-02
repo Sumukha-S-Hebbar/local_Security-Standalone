@@ -34,6 +34,7 @@ import Link from 'next/link';
 import { IncidentStatusSummary } from './incident-status-summary';
 import { fetchData } from '@/lib/api';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getApiBaseUrl } from '@/lib/get-api-url';
 
 type IncidentListItem = {
     id: number;
@@ -404,5 +405,3 @@ export function IncidentsPageClient() {
     </div>
   );
 }
-
-    
